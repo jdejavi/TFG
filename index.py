@@ -1,9 +1,14 @@
 
+import eth_typing
 from flask import Flask, render_template, request, redirect, make_response
 import random
 import hashlib
+
+from pyrfc3339 import generate
 import controlador_db
 import ecdsa
+from ecies.utils import generate_eth_key, generate_key
+from ecies import encrypt, decrypt
 import smtplib
 from email.message import EmailMessage
 import re
@@ -138,34 +143,7 @@ def login():
             
             return render_template('loginNoSuccess.html')
 
-#Aqui va el procedimiento donde los usuarios van a poder firmar y comprobar firmas de textos.
-@app.route('/generadorFirmas', methods=["GET", "POST"])
-def juegaFirmas():
-    global kprivada,kpublica
 
-    global mensaje
-
-    global firma
-
-    kprivada=''
-    kpublica=''
-    mensaje=''
-    firma=''
-    if(compruebaCookie()):
-            if(kprivada=='' and kpublica==''):
-                kprivada,kpublica=ecdsa.make_keypair()
-                publica = "(0x{:x}, 0x{:x})".format(*kpublica)
-                privada = hex(kprivada)
-            
-            if(mensaje == None): return render_template('juegaFirmas.html', priv=privada, pub=publica, sign='')
-            else:
-                mensaje = str(request.form.get('inputMsg'))
-                mensaje.encode()
-                firma = ecdsa.sign_message(kprivada,mensaje)
-                firmaFormat = "(0x{:x}, 0x{:x})".format(*firma)
-                return render_template('juegaFirmas.html', priv=kprivada, pub=kpublica, sign=firma, mensajeSigned=mensaje,privHex=privada,pubHex=publica,signHex=firmaFormat)
-    else:
-            return redirect('/login')
 @app.route('/validadorFirmas', methods=["GET", "POST"])
 def validaFirmas():
     if(compruebaCookie()):
@@ -199,6 +177,61 @@ def about():
         return render_template('teoria.html')
     else:
         return redirect('/login')
+
+#Aqui va el procedimiento donde los usuarios van a poder firmar y comprobar firmas de textos.
+@app.route('/generadorFirmas', methods=["GET", "POST"])
+def juegaFirmas():
+    global kprivada,kpublica
+
+    global mensaje
+
+    global firma
+
+    kprivada=''
+    kpublica=''
+    mensaje=''
+    firma=''
+    if(compruebaCookie()):
+            if(kprivada=='' and kpublica==''):
+                kprivada,kpublica=ecdsa.make_keypair()
+                publica = "(0x{:x}, 0x{:x})".format(*kpublica)
+                privada = hex(kprivada)
+            
+            if(mensaje == None): return render_template('juegaFirmas.html', priv=privada, pub=publica, sign='')
+            else:
+                mensaje = str(request.form.get('inputMsg'))
+                mensaje.encode()
+                firma = ecdsa.sign_message(kprivada,mensaje)
+                firmaFormat = "(0x{:x}, 0x{:x})".format(*firma)
+                return render_template('juegaFirmas.html', priv=kprivada, pub=kpublica, sign=firma, mensajeSigned=mensaje,privHex=privada,pubHex=publica,signHex=firmaFormat)
+    else:
+            return redirect('/login')
+
+@app.route('/cifrador',methods=["POST","GET"])
+def cifrador():
+    global eth_k
+    global ethPrivada
+    global ethPublica
+    global mensajeCiph
+    global msgCifrado
+    
+    msgCifrado=''
+    eth_k=''
+    ethPrivada=''
+    ethPublica=''
+    mensajeCiph=''
+    if(compruebaCookie()):
+        if(eth_k == '' and ethPrivada == '' and ethPublica == ''):
+            eth_k = generate_eth_key()
+            ethPrivada=eth_k.to_hex()
+            ethPublica=eth_k.public_key.to_hex()
+        mensajeCiph=str(request.form.get('inputMsgEth'))
+        if(mensajeCiph==None): return render_template('ecriptt.html', publica=ethPublica, ethmensaje='')
+        else:
+            mensajeCiph.encode()
+            msgCifrado=encrypt(ethPublica,mensajeCiph)
+            return render_template('encriptt.html', publica=ethPublica, ethmensaje='msgCifrado')
+    else: return ('/')
 
 @app.route('/logged/encdec', methods=["POST","GET"])
 def encdec():
