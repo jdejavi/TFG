@@ -1,7 +1,5 @@
 
-
-from xml.etree.ElementTree import tostring
-from flask import Flask, render_template, render_template_string, request, redirect, make_response, abort
+from flask import Flask, render_template, request, redirect, make_response
 import random
 import hashlib
 import controlador_db
@@ -9,7 +7,7 @@ import ecdsa
 import smtplib
 from email.message import EmailMessage
 import re
-from os import system
+
 '''implementar el toast con bootstrap y js'''
 
 '''conex=mysql.connector.connect(host="localhost", user="root", passwd="")'''
@@ -201,6 +199,13 @@ def about():
         return render_template('teoria.html')
     else:
         return redirect('/login')
+
+@app.route('/logged/encdec', methods=["POST","GET"])
+def encdec():
+    if(compruebaCookie()):
+        return render_template('encdec.html')
+    else: return redirect('/')
+
 
 @app.route('/perfil')
 def perfil():

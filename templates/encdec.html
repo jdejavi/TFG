@@ -1,0 +1,76 @@
+{% extends "layoutLogueado.html" %}
+
+{% block content%}
+<section id="titulo" class="jumbotron text-center">
+    <h2 class="display-4" style="margin-top: 25px;">Encriptado de mensaje con curva secp256k1</h2>
+</section>
+<section id="info" style="margin-top: 50px">
+    <div class="contenedor">
+        <div class="card border-white mb-3" style="margin-left: 10px; margin-right: 10px;">
+            <div class="card-body">
+                <h3>Procedimiento de cifrado de mensaje con curva eliptica</h3>
+                <p class="card-text">
+                    El procedimiento de cifrado de un mensaje con una curva eliptica no es el mismo que el posible cifrado con un algoritmo de cifrado asimétrico como el RSA,
+                    este consta de varias fases:<br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp1- Generación de par de claves con nuestra curva elíptica de preferencia, en nuestro caso la secp256k1<br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp2- Utilizar el algoritmo ECDH para compartir la clave de sesión del algoritmo AES usando el algoritmo HKDF-SHA256 en lugar del SHA256 para derivar nuestras claves AES<br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp3- Utilizar esta clave de sesión AES para encriptar y desencriptar, en nuestro caso con el AES-256-GCM<br>
+                    
+                    <p class="card-text" style="font-size: 20px">Nuestro mensaje encriptado será de esta forma:<br>
+                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 65 Bytes constarán la parte de la clave publica del emisor, con la curva elíptica secp256k1<br>
+                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 16 Bytes constarán la parte del vector de inicializacion (IV) del algoritmo AES-256-GCM<br>
+                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 16 Bytes constarán el codigo de autenticación del mensaje (MAC) del algoritmo AES-256-GCM<br>
+                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Tantos bytes como ocupe el mensaje encriptado con el algoritmo AES-256-GCM
+                    </p>
+                    <h4>¿Qué es ECDH?</h4>
+                    <p class="card-text">
+                        Inicialmente explicaremos que es el algoritmo <b>ECDH</b> y porqué es necesario para esta implementación, el agoritmo ECDH es un protocolo de intercambio de claves donde las dos partes 
+                        que van a compartir la clave tienen en su poder un par de claves publica y privada, se produce una clave derivada la cual se puede usar para cifrar otros mensajes con un protocolo de cifrado
+                        simétrico o de clave secreta.
+                        En nuestro caso, lo primero que haremos sera calcular nuestra clave ECDHA sobre la curva secp256k1.<br>
+                        Para calcularlo de manera manual, deberemos tener dos pares de claves publica y privada, generadas con la curva elíptica secp256k1, supongamos que:<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Alicia tiene el par<b> k1 = (da,Qa)</b> siendo da la clave privada y Qa la clave pública de Alicia<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Alberto tiene el par<b> k2 = (db,Qb)</b> siendo db la clave privada y Qb la clave pública de Alberto<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Alicia calcula el punto <b>(xk,yk)=da*Qb</b> y Alberto calcula el punto <b>(xk,yk)=db*Qa</b><br>
+                        El secreto compartido es el <b>xk</b>, dado que se cumple que <b>da*Qb = da*db*G = db*da*G = db*Qa</b> y la única informacion que se expone es la clave pública.
+                    </p>
+                    <h4>¿Qué es el AES?</h4>
+                    <p class="card-text">
+                        Una vez que tenemos el secreto compartido, ahora podremos utilizar el IV (Vector de inicializacion) y el código de autenticación del mensaje (MAC) para encriptar y desencriptar, pero empezaremos explicando
+                        que es el AES (Advances Encryption Standard) y como es el proceso de cifrado.<br>
+                        El <b>AES es un algoritmo de cifrado de clave secreta (simétrico)</b> y es de los mas utilizados y seguros de los actualmente disponibles sus <b>características</b> son las siguientes:<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Trabaja con operaciones a nivel de Bytes<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Define sus propias operaciones aritméticas<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Suma, consiste en realizar un XOR bit a bit<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Multiplicación<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Tiene diferentes tamaños de clave, de 128, 192 y 256 bits.<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- El tamaño de bloque es de 128 bits<br>
+                        El algoritmo de cifrado <b>AES</b> tiene diferentes <b>modos de operación</b>, que son:<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- El <b>ECB</b> o de diccionario, es el más basico, en el el mensaje se divide en bloques y se cifra cada uno de manera separada.<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- El <b>CBC</b> o de encadenado de bloques, antes de ser cifrado el bloque se hace una operacion XOR con el bloque previo que ya esta cifrado.<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- El <b>OFB</b> requiere del vector de inicializacion (IV) y emplea una clave para crear un bloque "aleatorio" al cual se le hace un XOR con el texto claro para obtener el cifrado.<br>
+                        Pero el modo de operacion que nos compete en nuestro caso, y a su vez el mas seguro dentro de los <b>GCM (Galois/Counter Mode)</b> es un modo que hace capaz al AES de asegurar tanto la confidencialidad como la autenticidad de los datos.<br>
+                        <b>El proceso de cifrado con el algoritmo AES es:</b><br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Cada byte de datos se sustituye por otro a través de una tabla ya determinada para, posteriormente, utilizar cada matriz 4x4 y modificarla de la manera:<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Los bytes de la segunda fila se mueven una posición a la izquierda<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Los bytes de la tercera fila se desplazan dos posiciones<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Los bytes de la cuarta fila se desplazan tres posiciones<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Para finalizar, las columnas son mezcladas y nuestra clave inicial se añade a todo el conjunto, y se vuelve a reanudar el proceso<br>
+                        Todo este procedimiento explicado arriba es repetido por unas 9 veces, sin contar con la etapa inicial ni la final, y para el proceso de descifrado es necesario hacer el procedimiento inverso sabiendo la clave.<br>
+                    </p>
+                </p>
+                <div class="col text-center">
+                    <p class="card-text" style="font-size: 20px;">
+                        A continuacion se proporciona de simulador de encriptado que utiliza la curva <b>secp256k1</b> y el <b>AES-256-GCM</b> donde se puede cifrar y descifrar en tiempo real mensajes:
+                  </p>  
+                  <a href="/cifrador"><button class="btn btn-outline-secondary mb-3" style="border-radius: 40px; ;" type="button">Cifrador</button></a>
+                  <a href="/descifrador"><button class="btn btn-outline-secondary mb-3" style="border-radius: 40px; ;" type="button">Descifrador</button></a></div>
+            </div>
+            </div>
+        </div>
+    
+    </div>
+
+</section>
+        
+{% endblock %}
