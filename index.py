@@ -230,7 +230,7 @@ def cifrador():
         else:
             mensajeCiph.encode()
             msgCifrado=encrypt(ethPublica,mensajeCiph)
-            return render_template('encriptt.html', publica=ethPublica, ethmensaje='msgCifrado')
+            return render_template('encriptt.html', publica=ethPublica, ethmensaje=msgCifrado)
     else: return ('/')
 
 @app.route('/logged/encdec', methods=["POST","GET"])
