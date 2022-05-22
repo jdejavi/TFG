@@ -1,0 +1,44 @@
+{% extends "layoutLogueado.html" %}
+
+{% block content%}
+<section id="titulo" class="jumbotron text-center">
+    <h2 class="display-4" style="margin-top: 25px;">Validador de la firma del mensaje</h2>
+</section>
+<section id="validador">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="card bg-dark text-white h-100" style="margin-top: 50px; border-radius: 1rem;width: fit-content;">
+            <b><p style="font-size: 20px;">Modo de uso</b><br>
+                &nbsp&nbsp&nbsp&nbsp- Genera un par de claves y firma un mensaje <a style="text-decoration: none;" href="/generadorFirmas">aquí</a>.<br>
+                &nbsp&nbsp&nbsp&nbsp- Copia la clave pública, la firma y el mensaje firmados.<br>
+                &nbsp&nbsp&nbsp&nbsp- Valida la firma.<br>
+                &nbsp&nbsp&nbsp&nbsp- La firma no será valida si:<br>
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Cambia el hash de la firma<br>
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Cambia la clave pública<br>
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Cambia el mensaje<br>
+            </p>
+        </div>
+        <div class="card bg-dark text-white h-100" style="margin-left: 12px;margin-top: 50px; border-radius: 1rem;width: 500px;">
+            <form action="/validadorFirmas" class="form-white mb-4" method="post">
+                <p>Introduce el mensaje</p>
+                <input type="message" name="inputMsg" class="form-control form-control-lg mb-3" placeholder="Introduce el mensaje a validar"/>
+                <p>Introduce la clave publica</p>
+                <input type="message" name="inputKu" class="form-control form-control-lg mb-3" placeholder="Introduce la clave publica"/>
+                <p>Introduce la firma</p>
+                <input type="message" name="inputSign" class="form-control form-control-lg mb-3" placeholder="Introduce la firma"/>
+                <div class="text-center">
+                    <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px;" type="submit">Valida</button>
+                </div>
+            </form>
+        </div>
+        <div class="card bg-dark text-white" style="margin-left:12px;margin-top: 50px; border-radius: 1rem; width: fit-content;">
+            <div class="card-body text-left">
+                <div id="data" >
+                    <p style="font-size: 25px; text-align: center;">Resultado de la validación</p>
+                    <p style="font-size: 20px;">{{resultadoFirma}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+</section>
+{% endblock %}

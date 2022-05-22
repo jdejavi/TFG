@@ -1,0 +1,50 @@
+{% extends "layoutLogueado.html" %}
+
+{% block content%}
+
+<section id="titulo" class="jumbotron text-center">
+    <h2 class="display-4" style="margin-top: 25px;">Simulador de firma de mensaje con curva secp256k1</h2>
+</section>
+<section id="dataCurva">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        
+            <div class="card bg-dark text-white" style="margin-top: 50px; border-radius: 1rem; width: fit-content;">
+                <div class="card-body text-left">
+                    <div id="data" >
+                        <p style="font-size: 30px; text-align: center;">Parámetros de la curva <b>secp256k1</b></p>
+                        <p style="font-size: 20px;">p -> 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f</p>
+                        <p style="font-size: 20px;">a -> 0</p>
+                        <p style="font-size: 20px;">b -> 7</p>
+                        <p style="font-size: 20px;">g -> (0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798,<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)</p>
+                        <p style="font-size: 20px;">n -> 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141</p>
+                        <p style="font-size: 20px;">h -> 1</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card bg-dark text-white justify-content-center align-items-center" style="margin-left: 12px;margin-top: 50px; border-radius: 1rem; width: fit-content;">
+                <div class="card-body text-center">
+                    <form action='/generadorFirmas' class="form-white mb-4" method="post">
+                        <p class="text-muted" style="text-align: center;">Mensaje</p> 
+                        <input type="message" name="inputMsg" class="form-control form-control-lg mb-3" placeholder="Introduce el mensaje a firmar"/>
+                        <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px;" type="submit">Firma</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card bg-dark text-white" style="margin-top: 20px;margin-bottom: 20px; border-radius: 1rem; width: fit-content;">
+                <div class="card-body text-left">
+                    <div id="data" >
+                        <p style="font-size: 30px; text-align: center;">Generación de par de claves y hash de firma</p>
+                        <p style="font-size: 20px;">Mensaje que se ha firmado -> {{mensajeSigned}}</p>
+                        <p style="font-size: 20px;">Valor de la clave pública -> {{pub}}</p>
+                        <p style="font-size: 20px;">Valor de la clave pública en hexa-> {{pubHex}}</p>
+                        <p style="font-size: 20px;">Valor del hash de la firma -> {{sign}}</p>
+                        <p style="font-size: 20px;">Valor del hash de la firma en hexa-> {{signHex}}</p>
+                    </div>
+                </div>
+            </div>
+    </div>
+    
+        
+</section>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "layoutNoLog.html" %}
+
+{% block content%}
+<!--Titulo de la informacion de la teoria de las curvas elipticas-->
+<section id="titulo" class="jumbotron text-center">
+    <h2 class="display-4" style="margin-top: 25px;">Teoría acerca de las <b>EC</b> aplicadas a la criptografía</h2>
+</section>
+
+<!--Toda la informacion irá por aqui-->
+<section id="info" style="margin-top: 50px">
+    <div class="contenedor">
+        <div class="card border-white mb-3" style="margin-left: 10px; margin-right: 10px;">
+            <div class="card-body">
+                <h1 class="card-title" style="text-align: center;">Introducción</h1>
+                <p class="card-text">
+                    Las curvas elipticas hoy en dia están en todos los sitios, desde los protolocos que usamos asiduamente en internet como el TLS o el SSH hasta algunos cifrados utilizados en Whatsapp, hasta el uso de 
+                    la curva secp256k1 utilizada para la criptografía de clave publica de bitcoin...
+
+                </p>
+                <p class="card-text">
+                    Inicialmente, ¿qué es una curva eliptica? Una curva elíptica es el conjunto de puntos que describen la ecuación: <img src="/static/ec1.png" class="card-img" style="width: 150px; height: 35px;"/>
+                    que cumplen la condición de: <img src="/static/ec2.png" class="card-img" style="width: 120px; height: 25px;"/> con el objetivo de excluir las curvas singulares (se explicará con detalle que son mas adelante),
+                    esta ecuación de arriba conforma la forma normal de las curvas elípticas de Weierstrass.
+                </p>
+                <p class="card-text">
+                    La forma en la que nuestra curva irá cambiando de forma dependerá de los diferentes valores de las variables 'a' y 'b', también consideraremos un punto en el infinito
+                    al cual denotaremos con el '0', la descripción de las curvas elípticas normales de Weierstrass completa incluyendo el punto en el infinito es la siguente: <img src="/static/ec4.png" class="card-img" style="width: 260px; height: 30px;"/><img src="/static/ec5.png" class="card-img" style="width: 190px; height: 30px;"/>
+                </p>
+                <p class="card-text">Los parámetros para definir una curva elíptica son los siguientes:</p>
+                <p class="card-text">&nbsp&nbsp&nbsp - El numero primo <b>p</b> que especifica el tamaño del campo finito</p>
+                <p class="card-text">&nbsp&nbsp&nbsp - Los coeficientes <b>a</b> y <b>b</b> de la ecuacion de la EC</p>
+                <p class="card-text">&nbsp&nbsp&nbsp - El punto base o punto generador <b>G</b> que genera el subgrupo</p>
+                <p class="card-text">&nbsp&nbsp&nbsp - El orden del subgrupo denominado por la letra <b>n</b></p>
+                <p class="card-text">&nbsp&nbsp&nbsp - El cofactor del subgrupo denominado por la letra <b>h</b></p>
+                <p class="card-text">&nbsp&nbsp&nbsp - De forma opcional se introduce una 'semilla', <b>S</b> que es utilizada para determinar los valores de a y b </p>
+                <p class="card-text">La razon de introducir la semilla es la aleatorizacion de los valores de a y b, dado que para obtenerla, primero se computa el hash de este numero S y posteriormente se calcula a como una funcion sobre ese hash de la forma <b>a=f(H)</b> siendo H el hash
+                y la razon de realizar esta práctica es que la curva no haya sido creada expresamente por el autor para que luego sea vulnerada.</p>
+                <p class="card-text">Todos estos parametros que serán explicados posteriormente se especifican como una tupla de la forma <b>(p,a,b,G,n,h,S)</b></p>
+                <h1 class="card-title" style="text-align: center; margin-top: 30px;">Aplicación a la criptografía</h1>
+                <p class="card-text"> 
+                    La criptografía de curva elíptica es un tipo de criptografía asimétrica (de clave pública). La criptografía de clave publica es un sistema que utiliza pares de claves,
+                    una clave privada y una clave pública, la clave publica puede ser compartida publicamente sin afectar a la seguridad, sin embargo la clave privada unicamente es conocida por el propietario.
+                    A la criptografía asimétrica se le pueden dar dos usos, para cifrar y para firmar, el objetivo de cifrar cierto dato con la clave publica es que el destinatario y unicamente el destinatario
+                    (dado que es el unico que posee la clave privada) sea capaz de ver el texto claro, mientras que el objetivo de la firma es poder identíficar unequívocamente el propietario del documento.
+                    Los tipos de criptografías de clave publica usadas son: RSA (para firma y para encriptación), DSA (para firma) y Diffie-Hellman (para acordar la clave)
+                </p>
+                <p class="card-text" style="font-size: 17px">La mejoría con respecto a la criptografía de clave publica actual es:</p>
+                <p class="card-text">&nbsp&nbsp&nbsp - Es mas rápida </p>
+                <p class="card-text">&nbsp&nbsp&nbsp - Puede usar claves mas cortas proporcionando el mismo nivel de seguridad </p>
+                <p class="card-text">A continuacion una tabla donde se comparan los diferentes cifrados con los tamaños de clave correspondientes:</p>
+                <!--<div align="center"> <img src="/static/tabla.png" class="card-img" style=" width: 700px; height: 350px;" align></div>-->
+                <p class="card-text">Como podemos observar, en el caso del tamaño de clave para el cifrado asimetrico de RSA el tamaño de clave es mucho mas mayor que para las curvas elipticas, proporcionando la 
+                    misma seguridad.
+                </p>
+                <h1 class="card-title" style="text-align: center; margin-top: 30px;">¿Cómo funciona la criptografía de curva eliptica (ECC)?</h1>
+                <p class="card-text">
+                    Teniendo en cuenta la ecuacion de las EC, como se ha mencionado anteriormente, dependiendo del valor de a y b nuestra curva tomará una forma u otra. Inicialmente tenemos que calcular nuestra clave privada,
+                    denominada <b>k</b>, que es un punto generador de nuestra curva elíptica. Para utilizar la ECC, es necesario utilizar un grupo de elementos finito con el objetivo de poder computar todos los elementos en un tiempo
+                    asequible, este grupo de elementos es denominado grupo cíclico y todos parten de un elemento primitivo, llamado generador o punto base y se forma su grupo delimitado con sus operaciones. Es conveniente que nuestro punto generador
+                    contenga a ser posible a todos los puntos de la curva, esto se puede calcular comprobando que <b>n=N, donde n es el numero de elementos del subgrupo y N el orden de la curva eliptica</b>, para controlar que el numero de elementos del
+                    subgrupo sea igual al orden de la EC se introduce un nuevo elemento, <b>el cofactor del subgrupo (h = N/n)</b> el cual siempre es un numero entero dado que n es divisor de N, el subgrupo contendrá a todos los elementos de la curva
+                    cuando el cofactor tenga un valor de 1.
+                </p>
+                <p class="card-text">
+                    
+                </p>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

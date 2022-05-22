@@ -1,0 +1,52 @@
+{% extends "layoutLogueado.html" %}
+
+{% block content%}
+<section id="header" class="jumbotron text-center">
+    <h1 class="display-3">Perfil</h1>
+    
+</section>
+
+<section id="galeria" style="margin-top: 50px;">
+    <div class="container">
+      <div class="row">
+      <div class="col-lg-4 mb-4">
+      <div class="card">
+        
+        <div class="card-body">
+          <h2 class="card-title">Retos FACILES</h2>
+          <p class="card-text">En esta sección podremos encontrar los retos de dificultad facil de la pagina, son unos cuestionarios para afianzar toda la informacion aprendida de la página</p>
+          <p><a href="/easy1" class="btn btn-outline-success btn-sm">Cuestionario 1</a></p>
+          <p><a href="/easy2" class="btn btn-outline-success btn-sm">Cuestionario 2</a></p>
+          <p><a href="/easy3" class="btn btn-outline-success btn-sm">Cuestionario 3</a></p>
+        </div>
+       </div>
+      </div>
+    <div class="col-lg-4 mb-4">
+    <div class="card">
+        
+        <div class="card-body">
+          <h2 class="card-title">Retos MEDIOS</h2>
+          <p class="card-text">En esta sección encontraremos los retos de dificultad media, estarán conformados por dos cuestionarios un poco mas complicados que los anteriores, con una tercera prueba donde se hará uso de OpenSSL para firmar archivos.</p>
+          <p><a href="/med1" class="btn btn-outline-success btn-sm">Cuestionario 1</a></p>
+          <p><a href="/med2" class="btn btn-outline-success btn-sm">Cuestionario 2</a></p>
+          <p><a href="/med3" class="btn btn-outline-success btn-sm">Prueba </a></p>
+        </div>
+        
+        </div>
+      </div>
+      <div class="col-lg-4 mb-4">
+      <div class="card">
+        
+        <div class="card-body">
+          <h2 class="card-title">Retos DIFICILES</h2>
+          <p class="card-text">En esta sección encontraremos los retos de dificultad difícil, se hara uso de OpenSSL para capturar los flags ocultados bajo cifrados con ECC en ficheros, dichos flags se tendran que introducir en la pagina para validar la realización de la prueba.</p>
+          <p><a href="/hard1" class="btn btn-outline-success btn-sm">Prueba 1</a></p>
+          <p><a href="/hard2" class="btn btn-outline-success btn-sm">Prueba 2</a></p>
+          <p><a href="/hard3" class="btn btn-outline-success btn-sm">Prueba 3</a></p>
+        </div>
+       </div>
+      </div>
+    </div>
+  </div>
+  </section>
+{% endblock%}
