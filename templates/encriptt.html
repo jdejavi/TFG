@@ -1,0 +1,49 @@
+{% extends "layoutLogueado.html" %}
+
+{% block content%}
+<section id="titulo" class="jumbotron text-center">
+    <h2 class="display-4" style="margin-top: 25px;">Cifrador de mensaje con curva secp256k1</h2>
+</section>
+<section id="cifrador">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="card bg-dark text-white" style="margin-top: 50px; border-radius: 1rem; width: fit-content;">
+            <div class="card-body text-left">
+                <div id="data" >
+                    <p style="font-size: 30px; text-align: center;">Partes del encriptado</p>
+                    <p style="font-size: 20px;">Parte de <b>secp256k1</b><br>
+                        &nbsp&nbsp&nbsp&nbsp- 65 Bytes de la clave publica del emisor
+                    </p>
+                    <p style="font-size: 20px;">Parte de <b>AES-256-GCM</b><br>
+                        &nbsp&nbsp&nbsp&nbsp- 16 Bytes del vector de inicializacion (IV)<br>
+                        &nbsp&nbsp&nbsp&nbsp- 16 Bytes del codigo de autenticacion del mensaje (MAC)<br>
+                        &nbsp&nbsp&nbsp&nbsp- Resto de bytes será el tamaño del mensaje encriptado<br>
+                    </p>
+                    <p style="font-size: 17px;">
+                        Para encriptar se usa la clave pública y para desencriptar la privada, es un cifrado simétrico
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="card bg-dark text-white justify-content-center align-items-center" style="margin-left: 12px;margin-top: 50px; border-radius: 1rem; width: fit-content;">
+            <div class="card-body text-center">
+                <form action='/cifrador' class="form-white mb-4" method="post">
+                    <p class="text-muted" style="text-align: center;">Mensaje a encriptar</p> 
+                    <input type="message" name="inputMsgEth" class="form-control form-control-lg mb-3" placeholder="Introduce el mensaje"/>
+                    <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px;" type="submit">Encripta</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card bg-dark text-white" style="margin-top: 20px;margin-bottom: 20px; border-radius: 1rem; width: fit-content;">
+            <div class="card-body text-left">
+                <div id="data" >
+                    <p style="font-size: 30px; text-align: center;"><b>Par de claves y mensaje cifrado</b></p>
+                    <p style="font-size: 20px;">Par de claves (privada, publica) usado -> ({{privada}}, {{publica}})</p>
+                    <p style="font-size: 20px;">Mensaje original -> {{msgOriginal}}</p>
+                    <p style="font-size: 20px;">Mensaje cifrado -> {{ethmensaje}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

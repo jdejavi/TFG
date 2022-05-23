@@ -1,5 +1,4 @@
 
-import eth_typing
 from flask import Flask, render_template, request, redirect, make_response
 import random
 import hashlib
@@ -25,7 +24,8 @@ app.config['SECRET_KEY'] = '123123123'
 '''Variables globales'''
 
 global correoOTP
-
+global cambiaClaves
+cambiaClaves = False
 
 
 '''Funciones sin ruta'''
@@ -154,7 +154,7 @@ def validaFirmas():
         if(publ == None or publ == ''): return render_template('validadorFirmas.html',resultadoFirma='Clave pública no seteada')
         if(sign == None or sign == ''): return render_template('validadorFirmas.html',resultadoFirma='Firma no seteada')
         result=ecdsa.verify_signaturePerso(publ,mens,sign)
-        print(result)
+        #print(result)
         return render_template('validadorFirmas.html', resultadoFirma=result)
     else: return redirect ('/login')
     
@@ -215,23 +215,33 @@ def cifrador():
     global mensajeCiph
     global msgCifrado
     
-    msgCifrado=''
-    eth_k=''
-    ethPrivada=''
-    ethPublica=''
-    mensajeCiph=''
+    
+    global cambiaClaves
+    
     if(compruebaCookie()):
-        if(eth_k == '' and ethPrivada == '' and ethPublica == ''):
+        if(cambiaClaves==False):
+            msgCifrado=''
+            eth_k=''
+            ethPrivada=''
+            ethPublica=''
+            mensajeCiph=''
+            mensajeOrig=''
+        if(eth_k == '' and ethPrivada == '' and ethPublica == '' and cambiaClaves==False):
+            cambiaClaves=True
             eth_k = generate_eth_key()
             ethPrivada=eth_k.to_hex()
             ethPublica=eth_k.public_key.to_hex()
-        mensajeCiph=str(request.form.get('inputMsgEth'))
-        if(mensajeCiph==None): return render_template('ecriptt.html', publica=ethPublica, ethmensaje='')
-        else:
-            mensajeCiph.encode()
+        mensajeOrig = str(request.form.get('inputMsgEth'))
+
+        if(mensajeOrig != None and mensajeOrig!='' and mensajeOrig!='None'):
+            mensajeCiph = mensajeOrig.encode()
             msgCifrado=encrypt(ethPublica,mensajeCiph)
-            return render_template('encriptt.html', publica=ethPublica, ethmensaje=msgCifrado)
-    else: return ('/')
+            return render_template('encriptt.html', publica=ethPublica, privada=ethPrivada, ethmensaje=msgCifrado, msgOriginal=mensajeOrig)
+
+        return render_template('encriptt.html', publica=ethPublica, privada=ethPrivada, ethmensaje='Mensaje no seteado', msgOriginal='Mensaje no seteado',clearedMsg='Mensaje no seteado')
+        
+    else: return redirect('/login')
+
 
 @app.route('/logged/encdec', methods=["POST","GET"])
 def encdec():
