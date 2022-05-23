@@ -166,16 +166,22 @@ def make_keypair():
 def hash_message(message):
     """Returns the truncated SHA521 hash of the message."""
     bytes = message.encode()
-    message_hash = hashlib.sha512(bytes).digest()
-    e = int.from_bytes(message_hash, 'big')
-
+    '''Cambiar el algoritmo del hash al sha256'''
+    #message_hash = hashlib.sha512(bytes).digest()
+    hash_mensaje = hashlib.sha256(bytes).digest()
+    
+    #e = int.from_bytes(message_hash, 'big')
+    e = int.from_bytes(hash_mensaje, 'big')
+    
     # FIPS 180 says that when a hash needs to be truncated, the rightmost bits
     # should be discarded.
-    z = e >> (e.bit_length() - curve.n.bit_length())
-
-    z.bit_length() <= curve.n.bit_length()
-
-    return z
+    #z = e >> (e.bit_length() - curve.n.bit_length())
+    
+    #print(z.bit_length() <= curve.n.bit_length())
+    #z.bit_length() <= curve.n.bit_length()
+    '''print('El valor de z es --> '+str(z))
+    print('\n\nValor de z.bit_length() --> '+str(z.bit_length()))'''
+    return e
 
 
 def sign_message(private_key, message):
@@ -235,7 +241,7 @@ def verify_signature(public_key, message, signature):
         return 'signature matches'
     else:
         return 'invalid signature'
-'''
+
 print('Curve:', curve.name)
 
 private, public = make_keypair()
@@ -251,15 +257,15 @@ print('Message:', msg)
 #print('Signature: (0x{:x}, 0x{:x})'.format(*signature))
 print('Verification:', verify_signature(public, msg, signature))
 
-msg = b'Hi there!'
+msg = 'Hi there!'
 print()
 print('Message:', msg)
 print('Verification:', verify_signature(public, msg, signature))
 
 private, public = make_keypair()
 
-msg = b'Hello!'
+msg = 'Hello!'
 print()
 print('Message:', msg)
 print("Public key: (0x{:x}, 0x{:x})".format(*public))
-print('Verification:', verify_signature(public, msg, signature))'''
+print('Verification:', verify_signature(public, msg, signature))

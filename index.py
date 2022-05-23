@@ -1,8 +1,6 @@
-
 from flask import Flask, render_template, request, redirect, make_response
 import random
 import hashlib
-
 from pyrfc3339 import generate
 import controlador_db
 import ecdsa
@@ -207,7 +205,7 @@ def juegaFirmas():
     else:
             return redirect('/login')
 
-@app.route('/cifrador',methods=["POST","GET"])
+'''@app.route('/cifrador',methods=["POST","GET"])
 def cifrador():
     global eth_k
     global ethPrivada
@@ -240,7 +238,7 @@ def cifrador():
 
         return render_template('encriptt.html', publica=ethPublica, privada=ethPrivada, ethmensaje='Mensaje no seteado', msgOriginal='Mensaje no seteado',clearedMsg='Mensaje no seteado')
         
-    else: return redirect('/login')
+    else: return redirect('/login')'''
 
 
 @app.route('/logged/encdec', methods=["POST","GET"])
