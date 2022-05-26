@@ -7,7 +7,7 @@ import ecdsa
 import smtplib
 from email.message import EmailMessage
 import re
-
+import DHAES
 '''implementar el toast con bootstrap y js'''
 
 '''conex=mysql.connector.connect(host="localhost", user="root", passwd="")'''
@@ -20,8 +20,10 @@ app.config['SECRET_KEY'] = '123123123'
 '''Variables globales'''
 
 global correoOTP
-global cambiaClaves
-cambiaClaves = False
+global mensajesEncriptadosParaAlice
+global mensajesEncriptadosParaBob
+global hayClaves
+hayClaves = False
 
 
 '''Funciones sin ruta'''
@@ -206,40 +208,70 @@ def juegaFirmas():
     else:
             return redirect('/login')
 
-'''@app.route('/cifrador',methods=["POST","GET"])
+@app.route('/cifrador',methods=["POST","GET"])
 def cifrador():
-    global eth_k
-    global ethPrivada
-    global ethPublica
-    global mensajeCiph
-    global msgCifrado
     
-    
-    global cambiaClaves
-    
+    global krAlice,kuAlice
+    global krBob,kuBob
+    global secretoAlice,secretoBob
+
+    global hayClaves
+    global mensajesEncriptadosParaAlice
+    global mensajesEncriptadosParaBob
+    global descAlice,descBob
+
     if(compruebaCookie()):
-        if(cambiaClaves==False):
-            msgCifrado=''
-            eth_k=''
-            ethPrivada=''
-            ethPublica=''
-            mensajeCiph=''
-            mensajeOrig=''
-        if(eth_k == '' and ethPrivada == '' and ethPublica == '' and cambiaClaves==False):
-            cambiaClaves=True
-            eth_k = generate_eth_key()
-            ethPrivada=eth_k.to_hex()
-            ethPublica=eth_k.public_key.to_hex()
-        mensajeOrig = str(request.form.get('inputMsgEth'))
+        if(hayClaves==False):
+            hayClaves=True
+            mensajesEncriptadosParaAlice=[]
+            mensajesEncriptadosParaBob=[]
+            krAlice,kuAlice = ecdsa.make_keypair()
+            krBob,kuBob = ecdsa.make_keypair()
+            secretoAlice = DHAES.ECDH_secretTrunc(krAlice,kuBob)
+            secretoBob = DHAES.ECDH_secretTrunc(krBob,kuAlice)
 
-        if(mensajeOrig != None and mensajeOrig!='' and mensajeOrig!='None'):
-            mensajeCiph = mensajeOrig.encode()
-            msgCifrado=encrypt(ethPublica,mensajeCiph)
-            return render_template('encriptt.html', publica=ethPublica, privada=ethPrivada, ethmensaje=msgCifrado, msgOriginal=mensajeOrig)
-
-        return render_template('encriptt.html', publica=ethPublica, privada=ethPrivada, ethmensaje='Mensaje no seteado', msgOriginal='Mensaje no seteado',clearedMsg='Mensaje no seteado')
+        encMsgAlice = request.form.get('inputAliceMsg')
+        encMsgBob = request.form.get('inputBobMsg')
+        descAlice=request.form.get('traduceDAli')
+        descBob = request.form.get('traduceDBob')
+        '''print(krAlice,kuAlice)
+        print(krBob,kuBob)'''
+        desencriptado=''
         
-    else: return redirect('/login')'''
+        if(descAlice != None):
+            if(len(mensajesEncriptadosParaBob)==0): return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+            
+            desencriptado = DHAES.desencriptarAES_EAX(secretoBob.encode(),mensajesEncriptadosParaBob[0])
+            mensajesEncriptadosParaBob.pop()
+            
+            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice=str(desencriptado).replace("b'","").replace("'",""), kuAlice=kuAlice, kuBob=kuBob)
+        
+        if(descBob != None):
+            if(len(mensajesEncriptadosParaAlice)==0): return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+            desencriptado = DHAES.desencriptarAES_EAX(secretoAlice.encode(),mensajesEncriptadosParaAlice[0])
+            mensajesEncriptadosParaAlice.pop()
+            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob=str(desencriptado).replace("b'","").replace("'",""), mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+        
+        #Si no hay nada puesto
+        if( (encMsgAlice == None or encMsgAlice == '') and (encMsgBob == None or encMsgBob=='') ):
+            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+        
+        #Si hay algun mensaje de Alice para Bob, lo añado al array y devuelvo el tam
+        if(encMsgAlice != None and encMsgAlice != '' and encMsgAlice!='None'):
+            
+            msgEncriptedAlice = DHAES.encriptarAES_EAX(secretoAlice.encode(),encMsgAlice)
+            mensajesEncriptadosParaBob.append(msgEncriptedAlice)
+            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+        
+        #Si hay algun mensaje de Bob para Alice, lo añado al array y devuelvo el tam
+        if(encMsgBob != None and encMsgBob != '' and encMsgBob!='None'):
+            
+            msgEncriptedBob = DHAES.encriptarAES_EAX(secretoBob.encode(),encMsgBob)
+            mensajesEncriptadosParaAlice.append(msgEncriptedBob)
+            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+        
+        return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+    else: return redirect('/login')
 
 
 @app.route('/logged/encdec', methods=["POST","GET"])
