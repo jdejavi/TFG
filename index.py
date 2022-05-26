@@ -236,20 +236,21 @@ def cifrador():
         descBob = request.form.get('traduceDBob')
         '''print(krAlice,kuAlice)
         print(krBob,kuBob)'''
-        desencriptado=''
         
+        desencriptado=''
+
         if(descAlice != None):
             if(len(mensajesEncriptadosParaBob)==0): return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
             
             desencriptado = DHAES.desencriptarAES_EAX(secretoBob.encode(),mensajesEncriptadosParaBob[0])
-            mensajesEncriptadosParaBob.pop()
+            mensajesEncriptadosParaBob.pop(0)
             
             return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice=str(desencriptado).replace("b'","").replace("'",""), kuAlice=kuAlice, kuBob=kuBob)
         
         if(descBob != None):
             if(len(mensajesEncriptadosParaAlice)==0): return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
             desencriptado = DHAES.desencriptarAES_EAX(secretoAlice.encode(),mensajesEncriptadosParaAlice[0])
-            mensajesEncriptadosParaAlice.pop()
+            mensajesEncriptadosParaAlice.pop(0)
             return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob=str(desencriptado).replace("b'","").replace("'",""), mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
         
         #Si no hay nada puesto
