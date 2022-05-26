@@ -53,26 +53,27 @@
                     <h4>Cálculo de firma y verificación de firma de forma teórica</h4>
                     <h5>Cálculo de firma de forma teórica</h5>
                     El procedimiento para calcular la firma de un mensaje es el siguiente:<br>
-                    &nbsp&nbsp&nbsp1 --> Seleccionamos un numero <b>k</b> de forma aleatoria dentro del intervalo cerrado entre 1 y n-1<br>
-                    &nbsp&nbsp&nbsp2 --> Calculamos <b>kG = (x1,y1)</b>, que será nuestro punto <b>P</b> que nos proporciona un punto dentro de la curva siendo G el punto generador.<br>
-                    &nbsp&nbsp&nbsp3 --> Calculamos el valor de <b>r</b> de la manera <b>r = x1 mod n</b> tratando el valor de x1 como un entero. Si r=0, se regresa al primer paso<br>
-                    &nbsp&nbsp&nbsp4 --> Calculamos el valor de <b>s</b> de la manera <b>s = k^-1( H(M) + rd ) mod n</b> siendo H(M) el mensaje encriptado con funcion hash y d la clave privada del firmante previamente calculada. Si s=0,
+                    Previamente calculamos <b><math>m = H(M)</math></b>, que es el valor resultante a aplicar el algoritmo SHA256 a nuestro mensaje<br>
+                    &nbsp&nbsp&nbsp1 --> Seleccionamos un numero <b><math>k</math></b> de forma aleatoria dentro del intervalo cerrado entre <b><math>[1, n-1]</math></b><br>
+                    &nbsp&nbsp&nbsp2 --> Calculamos <b><math>P = kG = (x1,y1)</math></b>, nos proporciona un punto dentro de la curva siendo G el punto generador.<br>
+                    &nbsp&nbsp&nbsp3 --> Calculamos el valor de <b>r</b> de la manera <b><math>r = x1 mod n</math></b> tratando el valor de x1 como un entero. Si <math>r <mo>=</mo> 0</math>, se regresa al primer paso<br>
+                    &nbsp&nbsp&nbsp4 --> Calculamos el valor de <b>s</b> de la manera <b><math>s = <msup><mi>k</mi><mn>-1</mn></msup>( m + rd ) mod n</math></b> siendo H(M) el mensaje encriptado con funcion hash y d la clave privada del firmante previamente calculada. Si <math>s<mo>=</mo>0</math>,
                     se regresa al primer paso.<br>
-                    Al final de este procedimiento, el par <b>(r,s)</b> es la firma, y el par <b>(r,-s)</b> también será una firma válida, dado que la representación de los puntos en un plano discreto es simétrica.<br><br>
+                    Al final de este procedimiento, el par <b><math>(r,s)</math></b> es la firma, y el par <b><math>(r,-s)</math></b> también será una firma válida, dado que la representación de los puntos en un plano discreto es simétrica.<br><br>
                     <h5>Verificación de firma de forma teórica</h5>
                     El procedimiento para verificar esta firma que hemos calculado anteriormente es el siguiente:<br>
                     &nbsp&nbsp&nbsp1 --> Verificamos que los valores de r y s se encuentran dentro del rango de valores entre 1 y n-1.<br>
-                    &nbsp&nbsp&nbsp2 --> Calculamos el valor <b>w = s^-1 mod n</b> que se utilizará posteriormente.<br>
+                    &nbsp&nbsp&nbsp2 --> Calculamos el valor <b><math>w <mo>=</mo><msup><mi>s</mi><mn>-1</mn></msup> mod n</math></b> que se utilizará posteriormente.<br>
                     &nbsp&nbsp&nbsp3 --> Calculamos los valores de u1 y u2 de la manera:<br>
-                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- <b>u1 = H(M)w mod n</b> donde H(M) es el valor hasheado del mensaje.<br>
-                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- <b>u2 = rw mod n</b>.<br>
-                    &nbsp&nbsp&nbsp4 --> Calculamos <b>u1P +u2Q = (x0,y0)</b> donde P es el valor previamente calculado y Q la clave pública del firmante.<br>
-                    &nbsp&nbsp&nbsp5 --> Calculamos un valor de v de la manera <b>v = x0 mod n</b><br>
-                    La firma será verificada únicamente si <b>v = r</b>.<br><br> <b>Lo importante del proceso de firmado y verificación es que para el firmado de un elemento es necesaria la clave privada, y para la verificación es necesaria la clave pública del firmante</b><br><br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- <b><math>u1 = mw mod n</math></b> siendo m la huella del mensaje.<br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- <b><math>u2 = rw mod n</math></b>.<br>
+                    &nbsp&nbsp&nbsp4 --> Calculamos <b><math>u1P +u2Q = (x0,y0)</math></b> donde P es el valor previamente calculado y Q la clave pública del firmante.<br>
+                    &nbsp&nbsp&nbsp5 --> Calculamos un valor de v de la manera <b><math>v = x0 mod n</math></b><br>
+                    La firma será verificada únicamente si <b><math>v <mo>=</mo> r</math></b>.<br><br> <b>Lo importante del proceso de firmado y verificación es que para el firmado de un elemento es necesaria la clave privada, y para la verificación es necesaria la clave pública del firmante</b><br><br>
                     <h4>Cálculo de firma y verificación de firma con OpenSSL</h4>
                     El procedimiento para firmar un fichero con el algoritmo ECDSA utilizando la herramienta de OpenSSL es el siguiente:<br>
-                    &nbsp&nbsp&nbsp1 --> Para firmar cierto fichero, se utiliza el comando <b>openssl dgst -sha1 -sign "clave_privada".pem "fichero" > "firma.bin"</b><br>
-                    &nbsp&nbsp&nbsp2 --> Para verificar la firma de cierto fichero firmado se utiliza el comando <b>openssl dgst -sha1 -verify "clave_pública.pem" -signature "firma.bin" "fichero"</b><br>
+                    &nbsp&nbsp&nbsp1 --> Para firmar cierto fichero, se utiliza el comando <b>openssl dgst -sha256 -sign "clave_privada".pem "fichero" > "firma.bin"</b><br>
+                    &nbsp&nbsp&nbsp2 --> Para verificar la firma de cierto fichero firmado se utiliza el comando <b>openssl dgst -sha256 -verify "clave_pública.pem" -signature "firma.bin" "fichero"</b><br>
                 </p>
                 <div class="col text-center">
                     <p class="card-text" style="font-size: 20px;">

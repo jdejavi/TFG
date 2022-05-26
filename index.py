@@ -4,8 +4,6 @@ import hashlib
 from pyrfc3339 import generate
 import controlador_db
 import ecdsa
-from ecies.utils import generate_eth_key, generate_key
-from ecies import encrypt, decrypt
 import smtplib
 from email.message import EmailMessage
 import re
@@ -190,18 +188,21 @@ def juegaFirmas():
     mensaje=''
     firma=''
     if(compruebaCookie()):
+            mensaje = str(request.form.get('inputMsg'))
             if(kprivada=='' and kpublica==''):
                 kprivada,kpublica=ecdsa.make_keypair()
                 publica = "(0x{:x}, 0x{:x})".format(*kpublica)
                 privada = hex(kprivada)
             
-            if(mensaje == None): return render_template('juegaFirmas.html', priv=privada, pub=publica, sign='')
+            if(mensaje == '' or mensaje == None or mensaje == 'None'): return render_template('juegaFirmas.html',mensajeSigned='', huellaMensaje='', priv=privada, pub=publica, sign='')
             else:
-                mensaje = str(request.form.get('inputMsg'))
+                
+                
+                huella = '0x'+hashlib.sha256(mensaje.encode()).hexdigest()
                 mensaje.encode()
                 firma = ecdsa.sign_message(kprivada,mensaje)
-                firmaFormat = "(0x{:x}, 0x{:x})".format(*firma)
-                return render_template('juegaFirmas.html', priv=kprivada, pub=kpublica, sign=firma, mensajeSigned=mensaje,privHex=privada,pubHex=publica,signHex=firmaFormat)
+                
+                return render_template('juegaFirmas.html', priv=kprivada, pub=kpublica, sign=firma, mensajeSigned=mensaje,huellaMensaje=huella)
     else:
             return redirect('/login')
 

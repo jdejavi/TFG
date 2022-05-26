@@ -31,11 +31,13 @@
                 <p class="card-text">&nbsp&nbsp&nbsp - Los coeficientes <b>a</b> y <b>b</b> de la ecuacion de la EC</p>
                 <p class="card-text">&nbsp&nbsp&nbsp - El punto base o punto generador <b>G</b> que genera el subgrupo</p>
                 <p class="card-text">&nbsp&nbsp&nbsp - El orden del subgrupo denominado por la letra <b>n</b></p>
-                <p class="card-text">&nbsp&nbsp&nbsp - El cofactor del subgrupo denominado por la letra <b>h</b></p>
+                <p class="card-text">&nbsp&nbsp&nbsp - El cofactor del subgrupo denominado por la letra <b>h</b>, el cofactor es la proporción entre la cantidad de puntos que genera el generador entre los puntos totales de la curva,
+                si el cofactor es igual a 1, eso quiere decir que este subgrupo genera todos los puntos de la curva</p>
                 <p class="card-text">&nbsp&nbsp&nbsp - De forma opcional se introduce una 'semilla', <b>S</b> que es utilizada para determinar los valores de a y b </p>
                 <p class="card-text">La razon de introducir la semilla es la aleatorizacion de los valores de a y b, dado que para obtenerla, primero se computa el hash de este numero S y posteriormente se calcula a como una funcion sobre ese hash de la forma <b>a=f(H)</b> siendo H el hash
                 y la razon de realizar esta práctica es que la curva no haya sido creada expresamente por el autor para que luego sea vulnerada.</p>
                 <p class="card-text">Todos estos parametros que serán explicados posteriormente se especifican como una tupla de la forma <b>(p,a,b,G,n,h,S)</b></p>
+
                 <h1 class="card-title" style="text-align: center; margin-top: 30px;">Aplicación a la criptografía</h1>
                 <p class="card-text"> 
                     La criptografía de curva elíptica es un tipo de criptografía asimétrica (de clave pública). La criptografía de clave publica es un sistema que utiliza pares de claves,
@@ -46,24 +48,23 @@
                 </p>
                 <p class="card-text" style="font-size: 17px">La mejoría con respecto a la criptografía de clave publica actual es:</p>
                 <p class="card-text">&nbsp&nbsp&nbsp - Es mas rápida </p>
-                <p class="card-text">&nbsp&nbsp&nbsp - Puede usar claves mas cortas proporcionando el mismo nivel de seguridad </p>
-                <p class="card-text">A continuacion una tabla donde se comparan los diferentes cifrados con los tamaños de clave correspondientes:</p>
-                <!--<div align="center"> <img src="/static/tabla.png" class="card-img" style=" width: 700px; height: 350px;" align></div>-->
-                <p class="card-text">Como podemos observar, en el caso del tamaño de clave para el cifrado asimetrico de RSA el tamaño de clave es mucho mas mayor que para las curvas elipticas, proporcionando la 
-                    misma seguridad.
+                <p class="card-text">&nbsp&nbsp&nbsp - Puede usar claves mas cortas proporcionando el mismo nivel de seguridad<br><br>
+                    Si comparamos los tamaños de clave de las ECC con respecto a otros tamaños de clave, los de las curvas elípticas son bastante mas pequeños con respecto a RSA, sobre los datos:<br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp<b>EC</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp vs &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <b>RSA</b><br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp160bits&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp1024bits<br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp224bits&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp2048bits<br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp256bits&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp3072bits<br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp384bits&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp7680bits<br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp521bits&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp15360bits<br>
+                    Este tipo de criptografía ha sido reconocido como el algoritmo mas fuerte respecto a los tamaños de clave que maneja. El factor de que proporcione la misma seguridad con menor tamaño de clave,
+                    lo pueden hacer que resulte mucho mas eficiente en sistemas con poco ancho de banda.
+
                 </p>
-                <h1 class="card-title" style="text-align: center; margin-top: 30px;">¿Cómo funciona la criptografía de curva eliptica (ECC)?</h1>
-                <p class="card-text">
-                    Teniendo en cuenta la ecuacion de las EC, como se ha mencionado anteriormente, dependiendo del valor de a y b nuestra curva tomará una forma u otra. Inicialmente tenemos que calcular nuestra clave privada,
-                    denominada <b>k</b>, que es un punto generador de nuestra curva elíptica. Para utilizar la ECC, es necesario utilizar un grupo de elementos finito con el objetivo de poder computar todos los elementos en un tiempo
-                    asequible, este grupo de elementos es denominado grupo cíclico y todos parten de un elemento primitivo, llamado generador o punto base y se forma su grupo delimitado con sus operaciones. Es conveniente que nuestro punto generador
-                    contenga a ser posible a todos los puntos de la curva, esto se puede calcular comprobando que <b>n=N, donde n es el numero de elementos del subgrupo y N el orden de la curva eliptica</b>, para controlar que el numero de elementos del
-                    subgrupo sea igual al orden de la EC se introduce un nuevo elemento, <b>el cofactor del subgrupo (h = N/n)</b> el cual siempre es un numero entero dado que n es divisor de N, el subgrupo contendrá a todos los elementos de la curva
-                    cuando el cofactor tenga un valor de 1.
-                </p>
-                <p class="card-text">
-                    
-                </p>
+                <p class="card-text"> Este apartado es una breve introducción a las curvas elípticas, para más información podéis acceder aqui:<br>
+                                    --> <a href="http://www.criptored.upm.es/crypt4you/temas/ECC/leccion1/leccion1.html">Página de la Universidad Politécnica de Madrid acerca de las curvas elípticas con aspectos mas teóricos</a><br>
+                                    --> <a href="https://es.cointelegraph.com/explained/elliptic-curve-cryptography-ecc-the-heart-of-security-in-the-crypto-and-internet-world">Página donde se contempla el uso de las EC en las criptomonedas</a></p>
+                
+                
 
             </div>
         </div>

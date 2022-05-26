@@ -242,7 +242,7 @@ def verify_signature(public_key, message, signature):
     else:
         return 'invalid signature'
 
-print('Curve:', curve.name)
+'''print('Curve:', curve.name)
 
 private, public = make_keypair()
 print("Private key:", hex(private))
@@ -268,4 +268,4 @@ msg = 'Hello!'
 print()
 print('Message:', msg)
 print("Public key: (0x{:x}, 0x{:x})".format(*public))
-print('Verification:', verify_signature(public, msg, signature))
+print('Verification:', verify_signature(public, msg, signature))'''

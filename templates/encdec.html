@@ -13,9 +13,9 @@
                     El procedimiento de cifrado de un mensaje con una curva eliptica no es el mismo que el posible cifrado con un algoritmo de cifrado asimétrico como el RSA,
                     este consta de varias fases:<br>
                     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp1- Generación de par de claves con nuestra curva elíptica de preferencia, en nuestro caso la secp256k1<br>
-                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp2- Utilizar el algoritmo ECDH para compartir la clave de sesión del algoritmo AES usando el algoritmo HKDF-SHA256 en lugar del SHA256 para derivar nuestras claves AES<br>
-                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp3- Utilizar esta clave de sesión AES para encriptar y desencriptar, en nuestro caso con el AES-256-GCM<br>
-                    
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp2- Utilizar el algoritmo ECDH para computar el secreto con el que se cifrarán los mensajes utilizando el algoritmo AES<br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp3- Ciframos los mensajes de forma simétrica con el secreto calculado, con el algoritmo de AES-EAX<br>
+                    <!-- Cambiar toda esta parte que está mal-->
                     <p class="card-text" style="font-size: 20px">Nuestro mensaje encriptado será de esta forma:<br>
                             &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 65 Bytes constarán la parte de la clave publica del emisor, con la curva elíptica secp256k1<br>
                             &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- 16 Bytes constarán la parte del vector de inicializacion (IV) del algoritmo AES-256-GCM<br>
