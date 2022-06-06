@@ -23,6 +23,8 @@ global correoOTP
 global mensajesEncriptadosParaAlice
 global mensajesEncriptadosParaBob
 global hayClaves
+global cambiaK
+cambiaK = False
 hayClaves = False
 
 
@@ -229,7 +231,8 @@ def cifrador():
             krBob,kuBob = ecdsa.make_keypair()
             secretoAlice = DHAES.ECDH_secretTrunc(krAlice,kuBob)
             secretoBob = DHAES.ECDH_secretTrunc(krBob,kuAlice)
-
+        
+        cambiaK=request.form.get('cambiaClaves')
         encMsgAlice = request.form.get('inputAliceMsg')
         encMsgBob = request.form.get('inputBobMsg')
         descAlice=request.form.get('traduceDAli')
@@ -239,39 +242,46 @@ def cifrador():
         
         desencriptado=''
 
+        if(cambiaK != None):
+            mensajesEncriptadosParaAlice=[]
+            mensajesEncriptadosParaBob=[]
+            krAlice,kuAlice = ecdsa.make_keypair()
+            krBob,kuBob = ecdsa.make_keypair()
+            secretoAlice = DHAES.ECDH_secretTrunc(krAlice,kuBob)
+            secretoBob = DHAES.ECDH_secretTrunc(krBob,kuAlice)
         if(descAlice != None):
-            if(len(mensajesEncriptadosParaBob)==0): return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+            if(len(mensajesEncriptadosParaBob)==0): return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
             
             desencriptado = DHAES.desencriptarAES_EAX(secretoBob.encode(),mensajesEncriptadosParaBob[0])
             mensajesEncriptadosParaBob.pop(0)
             
-            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice=str(desencriptado).replace("b'","").replace("'",""), kuAlice=kuAlice, kuBob=kuBob)
+            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice=str(desencriptado).replace("b'","").replace("'",""), kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
         
         if(descBob != None):
-            if(len(mensajesEncriptadosParaAlice)==0): return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+            if(len(mensajesEncriptadosParaAlice)==0): return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
             desencriptado = DHAES.desencriptarAES_EAX(secretoAlice.encode(),mensajesEncriptadosParaAlice[0])
             mensajesEncriptadosParaAlice.pop(0)
-            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob=str(desencriptado).replace("b'","").replace("'",""), mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob=str(desencriptado).replace("b'","").replace("'",""), mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
         
         #Si no hay nada puesto
         if( (encMsgAlice == None or encMsgAlice == '') and (encMsgBob == None or encMsgBob=='') ):
-            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
         
         #Si hay algun mensaje de Alice para Bob, lo añado al array y devuelvo el tam
         if(encMsgAlice != None and encMsgAlice != '' and encMsgAlice!='None'):
             
             msgEncriptedAlice = DHAES.encriptarAES_EAX(secretoAlice.encode(),encMsgAlice)
             mensajesEncriptadosParaBob.append(msgEncriptedAlice)
-            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
         
         #Si hay algun mensaje de Bob para Alice, lo añado al array y devuelvo el tam
         if(encMsgBob != None and encMsgBob != '' and encMsgBob!='None'):
             
             msgEncriptedBob = DHAES.encriptarAES_EAX(secretoBob.encode(),encMsgBob)
             mensajesEncriptadosParaAlice.append(msgEncriptedBob)
-            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
         
-        return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob)
+        return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
     else: return redirect('/login')
 
 
