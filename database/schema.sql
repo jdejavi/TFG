@@ -6,5 +6,6 @@ CREATE TABLE usuarios(
     mail VARCHAR(50) NOT NULL,
     nickname VARCHAR(50) NOT NULL,
     passwd VARCHAR(150) NOT NULL,
+    puntuacion BIGINT NOT NULL,
     confirmed VARCHAR(10) NOT NULL
 );

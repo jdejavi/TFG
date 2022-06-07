@@ -1,0 +1,49 @@
+{% extends "layoutLogueado.html" %}
+
+{% block content %}
+
+<section id="preguntas">
+    <form action='/perfil' class="form-white mb-4" style="text-align: center;" method="post">
+        <div class="card" style="border: none">
+            <input type="message" style="visibility: hidden; display: none;" name="puntuacion" value="{{puntaje}}"></input>
+            <h2 style="margin-top: 1%">La puntuación final ha sido de : {{puntaje}}</h2>
+            <div class="card-body">
+              <h2 class="card-title" style="text-align: center; margin-top: 2%;">Pregunta 1</h2>
+              <p>{{preguntaE1}}<br></p>
+              <p>{{resp11}}<br>{{resp12}}<br>{{resp13}}</p>
+              
+                <p class="text-muted" style="text-align: center;">Respuesta a la pregunta 1: {{letra1}}, {{resPreg1}}</p> 
+                
+              
+            
+            </div>
+        </div>
+        <div class="card" style="border: none">
+            <div class="card-body">
+              <h2 class="card-title" style="text-align: center; margin-top: 2%;">Pregunta 2</h2>
+              <p>{{preguntaE2}}</p>
+              <p>{{resp21}}<br>{{resp22}}<br>{{resp23}}</p>
+              
+                <p class="text-muted" style="text-align: center;">Respuesta a la pregunta 2: {{letra2}}, {{resPreg2}}</p> 
+                
+              
+            </div>
+        </div>
+        <div class="card" style="border: none">
+            
+            <div class="card-body">
+              <h2 class="card-title" style="text-align: center; margin-top: 2%;">Pregunta 3</h2>
+              <p>{{preguntaE3}}</p>
+              <p>{{resp31}}<br>{{resp32}}<br>{{resp33}}</p>
+              
+                <p class="text-muted" style="text-align: center;">Respuesta a la pregunta 3: {{letra3}}, {{resPreg3}}</p> 
+                
+              
+            </div>
+        </div>
+        <div class="col text-center">
+            <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px;" type="submit">Volver al perfil</button>
+        </div>
+    </form>         
+</section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "layoutLogueado.html" %}
+
+{% block content %}
+
+<section id="preguntas">
+    <form action='/easy' class="form-white mb-4" style="text-align: center;" method="post">
+        <div class="card" style="border: none">
+        
+            <div class="card-body">
+              <h2 class="card-title" style="text-align: center; margin-top: 2%;">Pregunta 1</h2>
+              <p>{{preguntaE1}}<br></p>
+              <p>{{resp11}}<br>{{resp12}}<br>{{resp13}}</p>
+              
+                <p class="text-muted" style="text-align: center;">Respuesta a la pregunta 1</p> 
+                <input type="message" name="answ1" class="form-control form-control-lg mb-3" style="border-width: 1px;border-color: black;"/>
+              
+            
+            </div>
+        </div>
+        <div class="card" style="border: none">
+            <div class="card-body">
+              <h2 class="card-title" style="text-align: center; margin-top: 2%;">Pregunta 2</h2>
+              <p>{{preguntaE2}}</p>
+              <p>{{resp21}}<br>{{resp22}}<br>{{resp23}}</p>
+              
+                <p class="text-muted" style="text-align: center;">Respuesta a la pregunta 2</p> 
+                <input type="message" name="answ2" class="form-control form-control-lg mb-3" style="border-width: 1px;border-color: black;"/>
+              
+            </div>
+        </div>
+        <div class="card" style="border: none">
+            
+            <div class="card-body">
+              <h2 class="card-title" style="text-align: center; margin-top: 2%;">Pregunta 3</h2>
+              <p>{{preguntaE3}}</p>
+              <p>{{resp31}}<br>{{resp32}}<br>{{resp33}}</p>
+              
+                <p class="text-muted" style="text-align: center;">Respuesta a la pregunta 3</p> 
+                <input type="message" name="answ3" class="form-control form-control-lg mb-3" style="border-width: 1px;border-color: black;"/>
+              
+            </div>
+        </div>
+        <div class="col text-center">
+            <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px;" type="submit">Valida respuestas</button>
+        </div>
+    </form>         
+</section>
+{% endblock %}

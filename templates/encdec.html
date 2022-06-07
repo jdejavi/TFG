@@ -48,7 +48,7 @@
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- El <b>ECB</b> o de diccionario, es el más basico, en el el mensaje se divide en bloques y se cifra cada uno de manera separada.<br>
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- El <b>CBC</b> o de encadenado de bloques, antes de ser cifrado el bloque se hace una operacion XOR con el bloque previo que ya esta cifrado.<br>
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- El <b>OFB</b> requiere del vector de inicializacion (IV) y emplea una clave para crear un bloque "aleatorio" al cual se le hace un XOR con el texto claro para obtener el cifrado.<br>
-                        Pero el modo de operacion que nos compete en nuestro caso, y a su vez el mas seguro dentro de los <b>GCM (Galois/Counter Mode)</b> es un modo que hace capaz al AES de asegurar tanto la confidencialidad como la autenticidad de los datos.<br>
+                        
                         <b>El proceso de cifrado con el algoritmo AES es:</b><br>
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Cada byte de datos se sustituye por otro a través de una tabla ya determinada para, posteriormente, utilizar cada matriz 4x4 y modificarla de la manera:<br>
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Los bytes de la segunda fila se mueven una posición a la izquierda<br>

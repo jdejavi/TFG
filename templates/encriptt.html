@@ -12,13 +12,13 @@
                     <p style="font-size: 30px; text-align: center;">Mensajes de Alice</p>
                     <p style="font-size: 17px;">Tienes {{nMsgPendientesAlice}} mensajes pendientes</p>
 
-                    <form action='/cifrador' class="form-white mb-4" method="post">
+                    <form action='/cifrador' class="form-white mb-4" style="text-align: center;" method="post">
                         <p class="text-muted" style="text-align: center;">Mensaje a cifrar y mandar</p> 
                         <input type="message" name="inputAliceMsg" class="form-control form-control-lg mb-3" placeholder="Introduce el mensaje"/>
                         <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px;" type="submit">Manda mensaje</button>
                     </form>
                     
-                    <form action="/cifrador" class="form-white mb-4" method="post">
+                    <form action="/cifrador" class="form-white mb-4" style="text-align: center;" method="post">
                         <input type="message" style="visibility: hidden; display: none;" name="traduceDBob" value="traduceDBob"></input>
                         <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px" type="submit">Recibe mensajes</button>
                     </form>
@@ -27,18 +27,18 @@
             </div>
         </div>
         <!---->
-        <div class="card bg-dark text-white" style="margin-top: 50px; border-radius: 1rem; width: fit-content;margin-left: 10%;">
+        <div class="card bg-dark text-white" id="cardBob" style="margin-top: 50px; border-radius: 1rem; width: fit-content;margin-left: 5%;">
             <div class="card-body text-left">
                 <div id="dataDeBob" >
                     <p style="font-size: 30px; text-align: center;">Mensajes de Bob</p>
                     <p style="font-size: 17px;">Tienes {{nMsgPendientesBob}} mensajes pendientes</p>
-                    <form action='/cifrador' class="form-white mb-4" method="post">
+                    <form action='/cifrador' class="form-white mb-4" style="text-align: center;" method="post">
                         <p class="text-muted" style="text-align: center;">Mensaje a cifrar y mandar</p> 
                         <input type="message" name="inputBobMsg" class="form-control form-control-lg mb-3" placeholder="Introduce el mensaje"/>
                         <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px;" type="submit">Manda mensaje</button>
                         
                     </form>
-                    <form action="/cifrador" class="form-white mb-4" method="post">
+                    <form action="/cifrador" class="form-white mb-4" style="text-align: center;" method="post">
                         <input type="message" style="visibility: hidden; display: none;" name="traduceDAli" value="traduceDAli"></input>
                         <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px" type="submit">Recibe mensajes</button>
                     </form>

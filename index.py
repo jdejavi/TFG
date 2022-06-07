@@ -1,7 +1,8 @@
+from pydoc import doc
 from flask import Flask, render_template, request, redirect, make_response
 import random
 import hashlib
-from pyrfc3339 import generate
+import time
 import controlador_db
 import ecdsa
 import smtplib
@@ -24,6 +25,12 @@ global mensajesEncriptadosParaAlice
 global mensajesEncriptadosParaBob
 global hayClaves
 global cambiaK
+global arraysLlenos
+global numAleat
+
+
+numAleat=0
+arraysLlenos = False
 cambiaK = False
 hayClaves = False
 
@@ -98,6 +105,25 @@ def enviar_correoOTP(nombre,apellido,apellido2,passwd,email):
     server.send_message(message)
         
     server.close()
+
+def leeEInicializa():
+    global arrayPreguntas
+    global arrayRespuestas
+    arrayPreguntas=[]
+    arrayRespuestas=[]
+
+    with open('static/preguntasEASY.txt', 'r') as f:
+                contenido = f.read()
+                todo = str(contenido.replace("Â","").replace("Ã­","í").replace("Ã¡","á").replace("Ã³","ó").replace("Ãº","ú").replace("Ã©","é").replace("Ã±","ñ")).split(sep="\n")
+                for i in range (len(todo)):
+                    arrayPreguntas.append(todo[i])
+    with open('static/respuestasEASY.txt', 'r') as f:
+            contenido = f.read()
+            todo = str(contenido.replace("Â","").replace("Ã­","í").replace("Ã¡","á").replace("Ã³","ó").replace("Ãº","ú").replace("Ã©","é").replace("Ã±","ñ")).split(sep="\n")
+            for i in range (len(todo)):        
+                arrayRespuestas.append(todo[i])
+    print('Vectores inicializados correctamente')
+
 '''Funciones con app route '''
 
 @app.errorhandler(404)
@@ -162,7 +188,6 @@ def validaFirmas():
 @app.route('/logged/home' , methods=["POST","GET"])
 def logged():
     if(compruebaCookie()):
-        
         hash=request.cookies.get('cookie_key')
         email = request.cookies.get('email_user')
 
@@ -284,21 +309,94 @@ def cifrador():
         return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
     else: return redirect('/login')
 
+@app.route('/easy', methods=["POST","GET"])
+def generaCuestionarioEasy():
+    global arrayPreguntas
+    global arrayRespuestas
+    global pregRandom
+    global respRandom
+    global arraysLlenos
+    global numAleat
+    global pregs
+    global resp
+    
+    if(compruebaCookie()):
+        answ1 = request.form.get('answ1')
+        answ2 = request.form.get('answ2')
+        answ3 = request.form.get('answ3')
+       
+        if(arraysLlenos==False):
+            pregs = []
+            resp = []
+            pregRandom = []
+            respRandom = []
+            arraysLlenos=True
+            ant = 0
+            for i in range(3):
+                #random.seed(time.time())
+                numAleat = random.randint(0, 9)
+                while numAleat == ant:
+                    numAleat = random.randint(0, 9)
+                pregRandom.append(arrayPreguntas[numAleat])
+                respRandom.append(arrayRespuestas[numAleat])
+                ant=numAleat
+            for i in range(len(pregRandom)):
+                split=str(pregRandom[i]).split(sep=";")
+                pregs.append(split[0])
+                resp.append(split[1])
+                resp.append(split[2])
+                resp.append(split[3])
+            return render_template('cuestEasy.html',preguntaE1=pregs[0], preguntaE2=pregs[1], preguntaE3=pregs[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
+            resp21=resp[3], resp22=resp[4], resp23=resp[5],resp31=resp[6],resp32=resp[7], resp33=resp[8])
+
+        if((answ1 == None or answ1 == ' ') or (answ2 == None or answ2 == ' ') or (answ3 == None or answ3 == ' ')):
+            
+            return render_template('cuestEasy.html',preguntaE1=pregs[0], preguntaE2=pregs[1], preguntaE3=pregs[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
+            resp21=resp[3], resp22=resp[4], resp23=resp[5],resp31=resp[6],resp32=resp[7], resp33=resp[8])
+        else:
+            puntuacion = 0
+            primera = 'Errónea'
+            segunda = 'Errónea'
+            tercera='Errónea'
+            
+            if(str(answ1).lower() == respRandom[0]):
+                puntuacion +=50
+                primera = 'Acierto'
+            if(str(answ2).lower() == respRandom[1]):
+                puntuacion +=50
+                segunda = 'Acierto'
+            if(str(answ3).lower() == respRandom[2]):
+                puntuacion +=50
+                tercera='Acierto'
+            pregRandom = []
+            respRandom = []
+            arraysLlenos=False
+            
+            return render_template('resultadosCuestionario.html', puntaje=puntuacion,resPreg1=primera, resPreg2=segunda, resPreg3=tercera, preguntaE1=pregs[0], preguntaE2=pregs[1], preguntaE3=pregs[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
+        resp21=resp[3], resp22=resp[4], resp23=resp[5],resp31=resp[6],resp32=resp[7], resp33=resp[8], letra1=str(answ1).lower(),letra2=str(answ2).lower(),letra3=str(answ3).lower())
+    else:
+        return redirect('/login')
 
 @app.route('/logged/encdec', methods=["POST","GET"])
 def encdec():
     if(compruebaCookie()):
         return render_template('encdec.html')
-    else: return redirect('/')
+    else: return redirect('/login')
 
 
-@app.route('/perfil')
+@app.route('/perfil', methods=["POST","GET"])
 def perfil():
     if(compruebaCookie()):
         hash=request.cookies.get('cookie_key')
         email=request.cookies.get('email_user')
         nick=controlador_db.obtieneNickname(hash,email)
-        return render_template('perfil.html', name=nick)
+        puntosAnt = controlador_db.obtienePuntos(hash,email)
+        puntos = request.form.get('puntuacion')
+        if(puntos!=None):
+            total = int(puntos) + int(puntosAnt)
+            controlador_db.actualizaPuntos(hash,email,total)
+            return render_template('perfil.html',name=nick, puntosAntCuestionario=puntos, puntosTotales=total)
+        return render_template('perfil.html',name=nick, puntosAntCuestionario=0,puntosTotales=puntosAnt)
     else:
         return redirect('/login')
 @app.route('/logout')
@@ -318,7 +416,10 @@ def register():
     
     passwd = request.form.get('inputPwd')
     if(compruebaCookie()):
-            return redirect('/perfil')
+            hash=request.cookies.get('cookie_key')
+            nickn = controlador_db.obtieneNickname(hash,email)
+            
+            return redirect('/perfil',name=nickn,puntosAntCuestionario=0)
     else:
         if(email is not None):
             isValid = es_correo_valido(email)
@@ -414,4 +515,6 @@ def multiDiscrLog():
 
 
 if __name__ == '__main__':
-    app.run(host="192.168.204.130", port=5000, debug=True)
+    leeEInicializa()
+    app.run(host="192.168.1.65", port=5000, debug=True)
+    

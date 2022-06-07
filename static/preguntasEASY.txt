@@ -1,10 +1,10 @@
-¿Cual es la curva elíptica utilizada para el sistema Bitcoin?;a) secp256k1;b) secp256r1; c)prime192v2
-¿Que especifíca el parametro "p" de la tupla de una curva elíptica?;a)Es el parámetro usado en las curvas elípticas para calcular un punto;b)El tamaño del campo finito de la curva;c)Razón entre los puntos del subgrupo y los de la curva
-¿Que especifica el parametro "a" de la tupla de una curva elítpica?;a)Es el orden del subgrupo;b)Es el punto generador de la curva;c)Es un coeficiente de la curva
-¿Que especifica el parametro "b" de la tupla de una curva elíptica?;a)Es un coeficiente de la curva;b)Es el numero primo que especifica el tamaño del campo finito de la curva;c)Valor pseudoaleatorio que sirve para aleatorizar los valores a y b de la curva
-¿Que especifica el parametro "G" de la tupla de una curva elíptica?;a)Es el punto generador de la curva;b)Es el cofactor del subgrupo;c)Es el hash del mensaje
-¿Que especifica el parametro "n" de la tupla de una curva elíptica?;a)Es el cofactor del subgrupo;b)Es el orden del subgrupo;c)Es un valor pseudoaleatorio que sirve para la aleatorización de a y b
-¿Que especifica el parametro "h" de la tupla de una curva elíptica?;a)Es el cofactor del subgrupo;b)Es el parámetro usado en las curvas elípticas para calcular un punto;c)Es el orden del subgrupo
-¿La criptografía de curva elíptica es asimétrica?;a)Sí;b)No, se puede ver porque tiene una clave privada y cifra con ella;c)Si, se debe compartir la clave privada para que puedan compartirte información confidencial
-¿La longitud de la clave de EC es mas larga que las de RSA?;a)Si;b)No
-Señala una de las mejoras de la ECC respecto a la criptografía de clave pública actual;a)Es mas rápida;b)Utiliza longitudes de clave mas cortas;c)a y b son correctas
+¿Cual es la curva elíptica utilizada para el sistema Bitcoin?;a) secp256k1;b) secp256r1; c) prime192v2
+¿Que especifíca el parametro "p" de la tupla de una curva elíptica?;a) Es el parámetro usado en las curvas elípticas para calcular un punto;b) El tamaño del campo finito de la curva;c)Razón entre los puntos del subgrupo y los de la curva
+¿Que especifica el parametro "a" de la tupla de una curva elítpica?;a) Es el orden del subgrupo;b) Es el punto generador de la curva;c) Es un coeficiente de la curva
+¿Que especifica el parametro "b" de la tupla de una curva elíptica?;a) Es un coeficiente de la curva;b) Es el numero primo que especifica el tamaño del campo finito de la curva;c) Valor pseudoaleatorio que sirve para aleatorizar los valores a y b de la curva
+¿Que especifica el parametro "G" de la tupla de una curva elíptica?;a) Es el punto generador de la curva;b)Es el cofactor del subgrupo;c) Es el hash del mensaje
+¿Que especifica el parametro "n" de la tupla de una curva elíptica?;a) Es el cofactor del subgrupo;b) Es el orden del subgrupo;c) Es un valor pseudoaleatorio que sirve para la aleatorización de a y b
+¿Que especifica el parametro "h" de la tupla de una curva elíptica?;a) Es el cofactor del subgrupo;b) Es el parámetro usado en las curvas elípticas para calcular un punto;c) Es el orden del subgrupo
+¿La criptografía de curva elíptica es asimétrica?;a) Sí;b) No, se puede ver porque tiene una clave privada y cifra con ella;c) Si, se debe compartir la clave privada para que puedan compartirte información confidencial
+¿La longitud de la clave de EC es mas larga que las de RSA?;a) Si;b) No;c) Si, para dar mayor seguridad
+Señala una de las mejoras de la ECC respecto a la criptografía de clave pública actual;a) Es mas rápida;b) Utiliza longitudes de clave mas cortas;c) a y b son correctas

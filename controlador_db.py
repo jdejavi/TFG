@@ -31,8 +31,8 @@ def insertar_usuarioNoDef(nombre,apellidos,mail,nickname,passwd,conf):
        else:
             bytes = passwd.encode()
             hashPwd = hashlib.sha256(bytes)
-            insercion = "INSERT INTO usuarios (nombre,apellidos,mail,nickname,passwd,confirmed) VALUES (%s, %s, %s, %s, %s, %s);"
-            cursor.execute(insercion,(nombre,apellidos, mail, nickname, hashPwd.hexdigest(),conf))
+            insercion = "INSERT INTO usuarios (nombre,apellidos,mail,nickname,passwd,puntuacion,confirmed) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+            cursor.execute(insercion,(nombre,apellidos, mail, nickname, hashPwd.hexdigest(),0,conf))
             connection.commit()
             connection.close()
             
@@ -50,8 +50,6 @@ def update_usuario(mail,conf):
    cursor=connection.cursor()
    if(cursor):
        print('DB conectada user def')
-       '''Aqui hago una comprobacion de que el correo no existe ya, si no existe lo añado pero si no existe no'''
-
        update = "UPDATE usuarios SET confirmed=%s WHERE mail=%s;"
        cursor.execute(update,(conf,mail))
        connection.commit()
@@ -153,6 +151,38 @@ def obtieneNickname(hash,email):
         else:
             connection.close()
             return ''
-       
 
-       
+def obtienePuntos(hash,email):
+    connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+    cursor=connection.cursor()
+    if(cursor):
+        print('DB Connected')
+        busqueda = "SELECT puntuacion FROM usuarios WHERE passwd=%s AND mail=%s"
+        cursor.execute(busqueda,(hash,email,))
+        fila=cursor.fetchall()
+        if(fila):
+            connection.close()
+            return fila[0][0]
+        else:
+            connection.close()
+            return ''
+def actualizaPuntos(hash,email,puntos):
+    connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+    cursor=connection.cursor()
+    if(cursor):
+        print('DB conectada user def')
+        update = "UPDATE usuarios set puntuacion=%s WHERE mail=%s AND passwd=%s"
+        cursor.execute(update,(puntos,email,hash,))
+        connection.commit()
+        connection.close()
+        print('Update exitosa user def')
+        return True
+    else: 
+        print('No se conecto a la Db')
+        return False
