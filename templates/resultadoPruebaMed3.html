@@ -1,0 +1,39 @@
+{% extends "layoutLogueado.html" %}
+
+{% block content %}
+<section id="preguntas">
+    <form action='/perfil' class="form-white mb-4" style="text-align: center;" method="post">
+        <div class="card" style="border: none">
+          <input type="message" style="visibility: hidden; display: none;" name="puntuacion" value="{{puntaje}}"></input>
+            <div class="card-body">
+              <h1 class="card-title" style="text-align: center; margin-top: 2%;">Resultados de la prueba media 2</h1>
+              <h2 style="margin-top: 1%">La puntuación final ha sido de : {{puntaje}}</h2>
+              <p style="font-size: 25px; text-align: center;"><br><br>Nos han firmado un mensaje, pero la firma se ha visto afectada dado a que se transmitió por un canal de comunicación no fiable,
+                ¿Nos podrías determinar que clave pública de todas es la correcta?:<br></p>
+                <p style="font-size: 25px; text-align: center;">
+                    Datos:<br>
+                <b>Mensaje enviado -> probando media 3</b><br><br>
+                <b>Clave pública -> (5294430175795699437342019427763921562217031206460909809461606753045122139287, 108966573344368087448138988220094583818439077430720570432225207183629585561010)</b><br><br></p>
+                <p style="font-size: 25px; text-align: center;">Por otro lado, tenemos estas tres opciones para el par (r,s):<br>
+                </p>
+                
+                <p style="font-size: 25px; text-align: center;"><b>Opción a:</b> (25610900817678654352488846041702532032526101180501577832643137045291167443886, 45777853356783435680386460711335765432921172313517167477794313835981995681773)</p>
+                <p style="font-size: 25px; text-align: center;"><b>Opción b:</b> (25610900817678654352488846041702532039526101180501577832641537045291167443886, 45777853356783435680386460711335293465921172313517167477794313835981995681773)</p>
+                <p style="font-size: 25px; text-align: center;"><b>Opción c:</b> (2561090081767865435248884604170253203952610118050157783264153704529116744388635434535, 45777853356783435680386460711335293465921172313517167477794313835981995681773234234)<br></p>
+                <p style="font-size: 30px; text-align: center;">¿Podrías indicar que par (r,s) es el correcto?</p>
+              <form action='/medP3' class="form-white mb-4" style="text-align: center;" method="post">
+                <p class="text-muted" style="text-align: center;">Respuesta correcta a la pregunta: b</p>
+                <p class="text-muted" style="text-align: center;">Respuesta contestada: {{respuesta}}, {{statusAnsw}}</p>
+                <div class="col text-center">
+                    <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px;" type="submit">Volver al perfil</button>
+                </div>
+              </form>
+            
+            </div>
+        </div>
+    </form>
+    
+    
+           
+</section>
+{% endblock %}

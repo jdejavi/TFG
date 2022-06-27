@@ -1,0 +1,76 @@
+{% extends "layoutNoLog.html" %}
+
+{% block content%}
+<section id="titulo" class="jumbotron text-center">
+    <h2 class="display-4" style="margin-top: 25px;">Uso de la criptografía de curva elíptica en <b>Bitcoin</b></h2>
+</section>
+
+<section id="introBTC" style="margin-top: 50px">
+    <div class="contenedor">
+        <div class="card border-white mb-3" style="margin-left: 10px; margin-right: 10px;">
+            <div class="card-body">
+                <h1 class="card-title" style="text-align: center;">Introducción</h1>
+                <p class="card-text" style="font-size: 20px;">
+                    En este apartado, se supondrán que ya se tienen conocimientos acerca de qué son las curvas elípticas y como funciona el algoritmo ECDSA, referencias:<br>
+                    &nbsp&nbsp&nbsp&nbsp - <a href="/teoria" style="text-decoration: none">Tutorial de las curvas elípticas</a><br>
+                    &nbsp&nbsp&nbsp&nbsp - <a href="/tutorialFirma" style="text-decoration: none">Tutorial acerca el ECDSA</a><br>
+                    
+                </p>
+                <h2 class="card-title">¿Qué es el Bitcoin?</h2>
+                <p class="card-text" style="font-size: 20px;">    
+                    El bitcoin es una criptomoneda y un sistema de pago descentralizado en el que los usuarios se pueden transferir los bitcoin entre ellos, y las transacciones son verificadas y guardadas en una red de nodos, cada nodo con una copia, llamada <b>blockchain</b>. Los bitcoins únicamente existen en la blockchain,
+                    en las copias distribuidas, los nodos. Por lo tanto, ser poseedores de bitcoins no significa otra cosa que podemos realizar transferencias mediante la introducción de un registro en el bloque que posteriormente será añadido a la cadena, pero obtenemos un problema, <b>¿Y si un usuario introduce una transaccion maliciosa?</b>
+                    Las transacciones deben ir firmadas por el propietario de la cartera que posee los fondos, el dueño.<br><br>
+                    Y para resolver este problema, se implementa el algoritmo <b>ECDSA</b> para firmar y verificar los bloques de manera que todas las transacciones sean honestas, con la clave pública y la privada.<br>
+                    La curva elíptica que usa el algoritmo ECDSA es la curva <b>secp256k1</b>, viene definida en el documento normativo <a href="https://www.secg.org/sec2-v2.pdf" style="text-decoration:none">SEC</a>, esta curva tiene una propiedad que es bastante atractiva, y es que pese a que las curvas mas usadas tienen una estructura aleatoria, la curva secp256k1 
+                    fue construida de una manera "no aleatoria" que hace que sea especialmente eficiente en cuestiones de computación, además de que a diferencia de las curvas elípticas populares, las constantes de secp256k1 fueron elegidas de una forma predictiva, por lo que reduce aun mas la posibilidad de que
+                    el creador de la curva haya introducido algun tipo de puerta trasera en ella.<br>                     
+                    La curva secp256k1 tiene los siguientes parámetros:<br><br>
+                    <b>Parámetros de la curva elíptica secp256k1</b><br>
+                    &nbsp&nbsp&nbsp&nbsp - <b>p</b> = FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFE FFFFFC2F<br>
+                    &nbsp&nbsp&nbsp&nbsp - <b>a</b> = 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000<br>
+                    &nbsp&nbsp&nbsp&nbsp - <b>b</b> = 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000007<br>
+                    &nbsp&nbsp&nbsp&nbsp - <b>G</b> = 02 79BE667E F9DCBBAC 55A06295 CE870B07 029BFCDB 2DCE28D9 59F2815B 16F81798<br>
+                    &nbsp&nbsp&nbsp&nbsp - <b>n</b> = FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFE BAAEDCE6 AF48A03B BFD25E8C D0364141<br>
+                    &nbsp&nbsp&nbsp&nbsp - <b>h</b> = 01 <br>
+                    
+                    De esta manera, cualquiera de los usuarios puede comprobar y validar la integridad de cada registro del bloque.
+                </p>
+
+                <h3 class="card-title">Problema de ECDSA</h3>
+                <p class="card-text" style="font-size: 20px;">
+                    El principal problema del uso del algoritmo con ECDSA es que <b>no tiene soporte nativo para multi firma</b>, y para darle solución a este problema, se debe usar un tipo de contrato inteligente denominado <b>Pay-to-Script-Hash (P2SH)</b>
+                    Los contratos inteligentes a nivel de bitcoin administran operaciones que se producen cuando los usuarios interaccionan entre ellos, en nuestro caso, el modelo de smart contract P2SH presenta ciertos fallos, el primero de ellos es la <b>falta de privacidad</b>.<br>
+                    Esto es debido a que el smart contract indica que todas las direcciones multifirma tienen que empezar por <b>3</b> y esto da pie a los analistas de la cadena de la posibilidad de poder reconocer todas las transacciones P2SH de la cadena, e identificar las direcciones implicadas,
+                    Y el segundo problema es <b>la cantidad de datos a procesar</b>, es decir, se requiere conocer todas las claves públicas de todos los participantes de la multi firma.<br> Por otro lado, el esquema para las transacciones multifirma sigue un esquema <b>M-of-N</b>,
+                    es decir, para realizar una transacción se necesitan M firmas de N para que se pueda realizar.<br> Por ejemplo, suponemos que Alice, Bob y Clarence poseen una cartera con multifirma que sigue un esquema 2 de 3, en este caso, con que dos usuarios firmen la transacción, se autoriza para hacerla,
+                    esto provoca que, cuantas mas firmas sean requeridas para realizarla, el tamaño de la transacción crecerá proporcionalmente a la cantidad de firmas que son requeridas. Para solucionar este problema se crean las <b>firmas Schnorr</b>.<br><br>
+                </p>
+                <img src="/static/multifirma.jpg" class="card-img" style="width: 370px; height: 300px; margin-left: auto; margin-right: auto; display: block;"/>
+                <h3 class="card-title" style="text-align: center;">La solución a ECDSA, las <b>Firmas Schnorr</b></h3>
+                <p class="card-text" style="font-size: 20px;">
+                    La principal función de las firmas Schnorr es permitir a varios usuarios crear una única firma para todas las partes involucradas, reduciendo el tamaño de las transacciones y la cantidad de firmas
+                    necesarios para realizar una transacción. Esta solución combina todas las firmas individuales dentro de una misma firma, lo que provoca que el tamaño de las transacciones se reduzca, ahora es únicamente una transacción.<br>
+                    Las ventajas de utilizar la curva de Schnorr frente a la ECDSA son las siguientes:<br><br>
+                    &nbsp&nbsp&nbsp&nbsp - Implementar las firmas Schnorr puede mejorar <b>la privacidad de la red</b> al permitir que las transacciones sean individuales, iguales que las de las carteras que no son multifirma.<br>
+                    &nbsp&nbsp&nbsp&nbsp - Este tipo de firmas reducen el almacenamiento de las transacciones realizadas con multifirmas, dado que disminuyen el tamaño de la transacción dentro del bloque, ahorrando espacio y precio de las comisiones.<br>
+                    &nbsp&nbsp&nbsp&nbsp - Otra mejora de reducir la cantidad de transacciones es que el modelo será <b>mucho más escalable</b>.<br>
+                    &nbsp&nbsp&nbsp&nbsp - Las firmas de Schnorr no tiene <b>problemas de maleabilidad</b>, es decir, que los atacantes que quieran realizar un ataque de DoS (Denegacion de Servicio) modificando los hashes que identifican a una transacción.<br>
+                    Sin embargo no todo es bonito en cuanto a las firmas de Schnorr, estas son sus desventajas:<br><br>
+                    &nbsp&nbsp&nbsp&nbsp - En la implementación, cada participante debe demostrar que su clave pública es válida, ¿cómo?, entregando una firma producida con su clave privada correspondiente.<br>
+                    &nbsp&nbsp&nbsp&nbsp - En cuanto a las maneras de manipular maliciosamente este sistema, un atacante podría reclamar una clave pública falsa, lo que le daria la capacidad de controlar la cartera multifirma.<br>
+                </p>
+                <h4>A continuación se muestra una comparativa entre las firmas tradicionales del Bitcoin utilizando ECDSA y para las multifirma el P2SH, y a la derecha las firmas Schnorr</h4>
+                <img src="/static/shcnorr.png" class="card-img" style="height: 75%; width: 75%; margin-left: auto; margin-right: auto; display: block;"/>
+
+                <p class="card-text" style="font-size: 20px;"> Si queréis saber mas acerca de las firmas Schnorr, podéis acceder a estos enlaces:<br>
+                --> <a href="https://en.bitcoin.it/wiki/Elliptic_Curve_Digital_Signature_Algorithm" style="text-decoration: none">BitcoinWiki sobre el algoritmo ECDSA</a><br>
+                --> <a href="https://academy.binance.com/es/articles/what-do-schnorr-signatures-mean-for-bitcoin" style="text-decoration: none">Binance academy acerca de las firmas Schnorr</a></p>
+                
+            </div>
+        </div>
+        
+    </div>
+    
+</section>
+{% endblock %}

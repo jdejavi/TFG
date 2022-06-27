@@ -14,15 +14,15 @@
   </head>
   <body>
     <header>
-      <h1>Multiplicacion de puntos en (&#120125;<sub>p</sub>)</h1>
+      <h1>Multiplicación de puntos en (&#120125;<sub>p</sub>)</h1>
       <nav>
         <ul>
           <li class="field">&#8477;</li>
           <li><a href="/graficador/adicionReales" class="active">Suma</a></li>
-          <li><a href="/graficador/multiReales">Multiplicacion</a></li>
+          <li><a href="/graficador/multiReales">Multiplicación</a></li>
           <li class="field">&#120125;<sub>p</sub></li>
           <li><a href="/graficador/adicionDiscr">Suma</a></li>
-          <li><a href="/graficador/multiDiscr">Multiplicacion</a></li>
+          <li><a href="/graficador/multiDiscr">Multiplicación</a></li>
         </ul>
       </nav>
     </header>
@@ -57,7 +57,7 @@
           </div>
         </div>
         <div id="summary">
-          <p>Multiplicacion escalar sobre la curva eliptica <span class="curve-equation"></span> in &#120125;<sub class="field-order"></sub>.</p>
+          <p>Multiplicación escalar sobre la curva elíptica <span class="curve-equation"></span> in &#120125;<sub class="field-order"></sub>.</p>
           <p>La curva tiene <span class="curve-order"></span> puntos (incluyendo el punto en el infinito).</p>
           <p>El subgrupo generado por <em>P</em> tiene <span class="subgroup-order"></span> puntos.</p>
           <p class="curve-singular-warning"><strong>Cuidado:</strong> esta curva es singular.</p>
@@ -65,7 +65,10 @@
         </div>
       </div>
     </main>
-    
+    <footer>
+      <p>Creador de la herramienta original: <a href="https://www.linkedin.com/in/andreacorbellini"> Andrea Corbellini</a>.</p>
+      <p>Software de libre uso bajo la <a href="http://opensource.org/licenses/MIT">licencia MIT</a>, enlace al <a href="https://github.com/andreacorbellini/ecc">GitHub</a>.</p>
+    </footer>
     <script type="text/javascript">
         $(function() {
             $.ec.curve = new $.ec.modk.ScalarMultiplication();

@@ -26,11 +26,16 @@ global mensajesEncriptadosParaBob
 global hayClaves
 global cambiaK
 global arraysLlenos
+global arraysLlenosMed
 global numAleat
 
+global correo
+global otp
+global nuevaPass
 
 numAleat=0
 arraysLlenos = False
+arraysLlenosMed = False
 cambiaK = False
 hayClaves = False
 
@@ -109,21 +114,83 @@ def enviar_correoOTP(nombre,apellido,apellido2,passwd,email):
 def leeEInicializa():
     global arrayPreguntas
     global arrayRespuestas
+    global arrayPregMed
+    global arrayRespMed
     arrayPreguntas=[]
     arrayRespuestas=[]
+    arrayPregMed=[]
+    arrayRespMed=[]
 
     with open('static/preguntasEASY.txt', 'r') as f:
                 contenido = f.read()
-                todo = str(contenido.replace("Â","").replace("Ã­","í").replace("Ã¡","á").replace("Ã³","ó").replace("Ãº","ú").replace("Ã©","é").replace("Ã±","ñ")).split(sep="\n")
-                for i in range (len(todo)):
-                    arrayPreguntas.append(todo[i])
+                todo1 = str(contenido.replace("Â","").replace("Ã­","í").replace("Ã¡","á").replace("Ã³","ó").replace("Ãº","ú").replace("Ã©","é").replace("Ã±","ñ")).split(sep="\n")
+                for i in range (len(todo1)):
+                    arrayPreguntas.append(todo1[i])
     with open('static/respuestasEASY.txt', 'r') as f:
             contenido = f.read()
-            todo = str(contenido.replace("Â","").replace("Ã­","í").replace("Ã¡","á").replace("Ã³","ó").replace("Ãº","ú").replace("Ã©","é").replace("Ã±","ñ")).split(sep="\n")
-            for i in range (len(todo)):        
-                arrayRespuestas.append(todo[i])
+            todo2 = str(contenido.replace("Â","").replace("Ã­","í").replace("Ã¡","á").replace("Ã³","ó").replace("Ãº","ú").replace("Ã©","é").replace("Ã±","ñ")).split(sep="\n")
+            for i in range (len(todo2)):        
+                arrayRespuestas.append(todo2[i])
+    with open('static/preguntasMED.txt', 'r') as f:
+                contenido = f.read()
+                todo3 = str(contenido.replace("Â","").replace("Ã­","í").replace("Ã¡","á").replace("Ã³","ó").replace("Ãº","ú").replace("Ã©","é").replace("Ã±","ñ")).split(sep="\n")
+                for i in range (len(todo3)):
+                    arrayPregMed.append(todo3[i])
+    with open('static/respuestasMED.txt', 'r') as f:
+            contenido = f.read()
+            todo4 = str(contenido.replace("Â","").replace("Ã­","í").replace("Ã¡","á").replace("Ã³","ó").replace("Ãº","ú").replace("Ã©","é").replace("Ã±","ñ")).split(sep="\n")
+            for i in range (len(todo4)):        
+                arrayRespMed.append(todo4[i])
     print('Vectores inicializados correctamente')
 
+def enviarCorreoRec(correo):
+    
+    
+    message = EmailMessage()
+    email_subject = "Proceso de recuperación de cuenta activado"
+    sender_email = "eccmati2022@hotmail.com"
+    email_pass = "SMcJ#Bj4OPgl"
+    receiver_em = correo
+
+    message['Subject'] = email_subject
+    message['From'] = sender_email
+    message['To'] = receiver_em
+
+    message.set_content("Para cambiar la contraseña del correo, introduce el siguiente código: "+str(numOTP)+"\nSi usted no ha intentado cambiar la cuenta de contraseña, ignore este mensaje.")
+
+    email_smtp = "smtp.outlook.com"
+    server = smtplib.SMTP(email_smtp, '587')
+    server.ehlo()
+    server.starttls()
+        
+    server.login(sender_email, email_pass)
+    server.send_message(message)
+        
+    server.close()
+
+def enviarCorreoPassCambiada(correo):
+    
+    message = EmailMessage()
+    email_subject = "Contraseña actualizada"
+    sender_email = "eccmati2022@hotmail.com"
+    email_pass = "SMcJ#Bj4OPgl"
+    receiver_em = correo
+
+    message['Subject'] = email_subject
+    message['From'] = sender_email
+    message['To'] = receiver_em
+
+    message.set_content("Le comunicamos desde ECCParaTodos que su contraseña ha sido cambiada con éxito")
+
+    email_smtp = "smtp.outlook.com"
+    server = smtplib.SMTP(email_smtp, '587')
+    server.ehlo()
+    server.starttls()
+        
+    server.login(sender_email, email_pass)
+    server.send_message(message)
+        
+    server.close()
 '''Funciones con app route '''
 
 @app.errorhandler(404)
@@ -169,6 +236,93 @@ def login():
             
             return render_template('loginNoSuccess.html')
 
+@app.route('/recovery',methods=["POST","GET"])
+def recovery():
+    global numOTP
+    global correoOTP
+    global correo
+    global nuevaPass
+    global otp
+
+    numOTP = random.randint(100000,999999)
+    correo = request.form.get('mailLost')
+    
+    if(correo == None):
+        correoOTP=None
+        otp=None
+        nuevaPass=None
+        return render_template('introCorreo.html')
+    else:
+        correoOTP = correo
+        print('Valor de correoOTP ->'+ str(correoOTP))
+        return redirect('/introOTP2')
+
+@app.route('/introOTP2', methods=["POST","GET"])
+def introOTP2():
+    global numOTP
+    global otp
+
+    otp = request.form.get('inputOTP2')
+    
+    if(otp == None):
+        enviarCorreoRec(correo)
+        return render_template('introOTP2.html')
+    else:
+        if(otp == str(numOTP)):
+            numOTP = otp
+            return redirect('/nuevaContraseña')
+@app.route('/nuevaContraseña', methods=["POST","GET"])
+def nuevaPasswd():
+    global nuevaPass
+
+    nuevaPass=request.form.get('introNuevaPass')
+    
+    if(nuevaPass == None):
+        return render_template('introduceNuevaPass.html')
+    else:
+        bytes = str(nuevaPass).encode()
+        hashPwd = hashlib.sha256(bytes)
+        controlador_db.update_passwd(correoOTP,hashPwd.hexdigest())
+        enviarCorreoPassCambiada(correoOTP)
+        return redirect('/home')
+
+    '''if(otp==None):
+        enviarCorreoRec(correo)
+        return render_template('introOTP2.html')
+    
+    else:
+        correoOTP=correo
+        print('Valor de correoOTP ->'+str(correoOTP))
+        otp = request.form.get('introOTP2')
+        print('Valor de otp ->'+ str(otp))
+        if(otp==None):
+            enviarCorreoRec(correo)
+            return render_template('introOTP2.html')
+        else: 
+            if(otp == str(numOTP)):
+                nuevaPass=request.form.get('introNuevaPass')
+                print('Valor de nuevaPass ->'+ str(nuevaPass))
+                if(nuevaPass == None):
+                    return render_template('introduceNuevaPass.html')
+                else:
+                    bytes = str(nuevaPass).encode()
+                    hashPwd = hashlib.sha256(bytes)
+                    controlador_db.update_passwd(correo,hashPwd)
+                    enviarCorreoPassCambiada(correo)
+                    return redirect('/home')
+            else:
+                return redirect('/introOTP2')'''
+
+@app.route('/bitcoin', methods=["POST","GET"])
+def tutoBtc():
+    return render_template('tutoBTC.html')
+
+@app.route('/logged/bitcoin', methods=["POST","GET"])
+def tutoBtcLog():
+    if(compruebaCookie()):
+        return render_template('tutoBTCLogueado.html')
+    else: return redirect('/login')
+
 
 @app.route('/validadorFirmas', methods=["GET", "POST"])
 def validaFirmas():
@@ -199,7 +353,7 @@ def logged():
 @app.route('/logged/teoria')
 def about():
     if(compruebaCookie()):
-        return render_template('teoria.html')
+        return render_template('teoriaLogueado.html')
     else:
         return redirect('/login')
 
@@ -275,38 +429,38 @@ def cifrador():
             secretoAlice = DHAES.ECDH_secretTrunc(krAlice,kuBob)
             secretoBob = DHAES.ECDH_secretTrunc(krBob,kuAlice)
         if(descAlice != None):
-            if(len(mensajesEncriptadosParaBob)==0): return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
+            if(len(mensajesEncriptadosParaBob)==0): return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
             
             desencriptado = DHAES.desencriptarAES_EAX(secretoBob.encode(),mensajesEncriptadosParaBob[0])
             mensajesEncriptadosParaBob.pop(0)
             
-            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice=str(desencriptado).replace("b'","").replace("'",""), kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
+            return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje', msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice=str(desencriptado).replace("b'","").replace("'",""), kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
         
         if(descBob != None):
-            if(len(mensajesEncriptadosParaAlice)==0): return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
+            if(len(mensajesEncriptadosParaAlice)==0): return render_template('encriptt.html', msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
             desencriptado = DHAES.desencriptarAES_EAX(secretoAlice.encode(),mensajesEncriptadosParaAlice[0])
             mensajesEncriptadosParaAlice.pop(0)
-            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob=str(desencriptado).replace("b'","").replace("'",""), mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
+            return render_template('encriptt.html', msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob=str(desencriptado).replace("b'","").replace("'",""), mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
         
         #Si no hay nada puesto
         if( (encMsgAlice == None or encMsgAlice == '') and (encMsgBob == None or encMsgBob=='') ):
-            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
+            return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
         
         #Si hay algun mensaje de Alice para Bob, lo añado al array y devuelvo el tam
         if(encMsgAlice != None and encMsgAlice != '' and encMsgAlice!='None'):
             
             msgEncriptedAlice = DHAES.encriptarAES_EAX(secretoAlice.encode(),encMsgAlice)
             mensajesEncriptadosParaBob.append(msgEncriptedAlice)
-            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
+            return render_template('encriptt.html',msgEncAlice=str(msgEncriptedAlice),msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
         
         #Si hay algun mensaje de Bob para Alice, lo añado al array y devuelvo el tam
         if(encMsgBob != None and encMsgBob != '' and encMsgBob!='None'):
             
             msgEncriptedBob = DHAES.encriptarAES_EAX(secretoBob.encode(),encMsgBob)
             mensajesEncriptadosParaAlice.append(msgEncriptedBob)
-            return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
+            return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob=str(msgEncriptedBob), nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
         
-        return render_template('encriptt.html', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
+        return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
     else: return redirect('/login')
 
 @app.route('/easy', methods=["POST","GET"])
@@ -324,7 +478,9 @@ def generaCuestionarioEasy():
         answ1 = request.form.get('answ1')
         answ2 = request.form.get('answ2')
         answ3 = request.form.get('answ3')
-       
+        hash=request.cookies.get('cookie_key')
+        email=request.cookies.get('email_user')
+        
         if(arraysLlenos==False):
             pregs = []
             resp = []
@@ -346,12 +502,12 @@ def generaCuestionarioEasy():
                 resp.append(split[1])
                 resp.append(split[2])
                 resp.append(split[3])
-            return render_template('cuestEasy.html',preguntaE1=pregs[0], preguntaE2=pregs[1], preguntaE3=pregs[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
+            return render_template('cuestionarios.html',dificultad='Fácil',preguntaE1=pregs[0], preguntaE2=pregs[1], preguntaE3=pregs[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
             resp21=resp[3], resp22=resp[4], resp23=resp[5],resp31=resp[6],resp32=resp[7], resp33=resp[8])
 
-        if((answ1 == None or answ1 == ' ') or (answ2 == None or answ2 == ' ') or (answ3 == None or answ3 == ' ')):
+        if((answ1 == None or answ1 == '') or (answ2 == None or answ2 == '') or (answ3 == None or answ3 == '')):
             
-            return render_template('cuestEasy.html',preguntaE1=pregs[0], preguntaE2=pregs[1], preguntaE3=pregs[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
+            return render_template('cuestionarios.html',dificultad='Fácil',preguntaE1=pregs[0], preguntaE2=pregs[1], preguntaE3=pregs[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
             resp21=resp[3], resp22=resp[4], resp23=resp[5],resp31=resp[6],resp32=resp[7], resp33=resp[8])
         else:
             puntuacion = 0
@@ -368,12 +524,191 @@ def generaCuestionarioEasy():
             if(str(answ3).lower() == respRandom[2]):
                 puntuacion +=50
                 tercera='Acierto'
-            pregRandom = []
-            respRandom = []
+            puntosAnt = controlador_db.obtienePuntos(hash,email)
+            puntosNew = puntosAnt+puntuacion
+            controlador_db.actualizaPuntos(hash,email,puntosNew)
             arraysLlenos=False
             
-            return render_template('resultadosCuestionario.html', puntaje=puntuacion,resPreg1=primera, resPreg2=segunda, resPreg3=tercera, preguntaE1=pregs[0], preguntaE2=pregs[1], preguntaE3=pregs[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
-        resp21=resp[3], resp22=resp[4], resp23=resp[5],resp31=resp[6],resp32=resp[7], resp33=resp[8], letra1=str(answ1).lower(),letra2=str(answ2).lower(),letra3=str(answ3).lower())
+            return render_template('resultadosCuestionario.html',dificultad='Fácil', puntaje=puntuacion,resPreg1=primera, resPreg2=segunda, resPreg3=tercera, preguntaE1=pregs[0], preguntaE2=pregs[1], preguntaE3=pregs[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
+        resp21=resp[3], resp22=resp[4], resp23=resp[5],resp31=resp[6],resp32=resp[7], resp33=resp[8], letra1=str(answ1).lower(),letra2=str(answ2).lower(),letra3=str(answ3).lower(), corr1=respRandom[0],
+        corr2=respRandom[1], corr3=respRandom[2])
+    else:
+        return redirect('/login')
+
+@app.route('/medC',methods=["POST","GET"])
+def generaCuestionarioMedio():
+    global arrayPregMed
+    global arrayRespMed
+    global pregRandomMed
+    global respRandomMed
+    global arraysLlenosMed
+    global numAleat
+    global pregsMed
+    global respMed
+    if(compruebaCookie()):
+        answ1 = request.form.get('answ1')
+        answ2 = request.form.get('answ2')
+        answ3 = request.form.get('answ3')
+        hash=request.cookies.get('cookie_key')
+        email=request.cookies.get('email_user')
+
+        if(arraysLlenosMed==False):
+            pregsMed = []
+            respMed = []
+            pregRandomMed = []
+            respRandomMed = []
+            arraysLlenosMed=True
+            ant = 0
+            for i in range(3):
+                #random.seed(time.time())
+                numAleat = random.randint(0, 9)
+                while numAleat == ant:
+                    numAleat = random.randint(0, 9)
+                pregRandomMed.append(arrayPregMed[numAleat])
+                respRandomMed.append(arrayRespMed[numAleat])
+                ant=numAleat
+            for i in range(len(pregRandomMed)):
+                split=str(pregRandomMed[i]).split(sep=";")
+                pregsMed.append(split[0])
+                respMed.append(split[1])
+                respMed.append(split[2])
+                respMed.append(split[3])
+            return render_template('cuestionariosMed.html',dificultad='Media',preguntaE1=pregsMed[0], preguntaE2=pregsMed[1], preguntaE3=pregsMed[2], resp11=respMed[0],resp12=respMed[1], resp13=respMed[2],
+            resp21=respMed[3], resp22=respMed[4], resp23=respMed[5],resp31=respMed[6],resp32=respMed[7], resp33=respMed[8])
+
+        if((answ1 == None or answ1 == '') or (answ2 == None or answ2 == '') or (answ3 == None or answ3 == '')):
+            
+            return render_template('cuestionariosMed.html',dificultad='Media',preguntaE1=pregsMed[0], preguntaE2=pregsMed[1], preguntaE3=pregsMed[2], resp11=respMed[0],resp12=respMed[1], resp13=respMed[2],
+            resp21=respMed[3], resp22=respMed[4], resp23=respMed[5],resp31=respMed[6],resp32=respMed[7], resp33=respMed[8])
+        else:
+            puntuacion = 0
+            primera = 'Errónea'
+            segunda = 'Errónea'
+            tercera='Errónea'
+            
+            if(str(answ1).lower() == respRandomMed[0]):
+                puntuacion +=100
+                primera = 'Acierto'
+            if(str(answ2).lower() == respRandomMed[1]):
+                puntuacion +=100
+                segunda = 'Acierto'
+            if(str(answ3).lower() == respRandomMed[2]):
+                puntuacion +=100
+                tercera='Acierto'
+            
+            puntosAnt = controlador_db.obtienePuntos(hash,email)
+            puntosNew = puntosAnt+puntuacion
+            controlador_db.actualizaPuntos(hash,email,puntosNew)
+
+            return render_template('resultadosCuestionario.html',dificultad='Media', puntaje=puntuacion,resPreg1=primera, resPreg2=segunda, resPreg3=tercera, preguntaE1=pregsMed[0], preguntaE2=pregsMed[1], preguntaE3=pregsMed[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
+        resp21=resp[3], resp22=resp[4], resp23=resp[5],resp31=resp[6],resp32=resp[7], resp33=resp[8], letra1=str(answ1).lower(),letra2=str(answ2).lower(),letra3=str(answ3).lower(), corr1=respRandomMed[0],
+        corr2=respRandomMed[1], corr3=respRandomMed[2])
+    else:
+        return redirect('/login')
+
+@app.route('/medP1', methods=["POST","GET"])
+def medP1():
+    if(compruebaCookie()):
+        hash=request.cookies.get('cookie_key')
+        email=request.cookies.get('email_user')
+        answ1 = request.form.get('answ1')
+        
+        if(answ1 == None or answ1 == ''):
+            return render_template('pruebaMed1.html')
+        
+        else:
+            puntuacion=0
+            statusAnsw = 'Error'
+            if(str(answ1) == 'c'):
+                puntuacion += 250
+                statusAnsw = 'Acierto'
+                puntosAnt = controlador_db.obtienePuntos(hash,email)
+                puntosNew = puntosAnt+puntuacion
+                controlador_db.actualizaPuntos(hash,email,puntosNew)
+
+            return render_template('resultadoPruebaMed1.html', puntaje=puntuacion, respuesta = answ1, statusAnsw=statusAnsw)
+    else:
+        return redirect('/login')
+
+@app.route('/medP2', methods=["POST","GET"])
+def medP2():
+    if(compruebaCookie()):
+        hash=request.cookies.get('cookie_key')
+        email=request.cookies.get('email_user')
+        answ1 = request.form.get('answ1')
+        
+        if(answ1 == None or answ1 == ''):
+            return render_template('pruebaMed2.html')
+        
+        else:
+            puntuacion=0
+            statusAnsw = 'Error'
+            if(str(answ1) == 'a'):
+                puntuacion += 250
+                statusAnsw = 'Acierto'
+                puntosAnt = controlador_db.obtienePuntos(hash,email)
+                puntosNew = puntosAnt+puntuacion
+                controlador_db.actualizaPuntos(hash,email,puntosNew)
+            return render_template('resultadoPruebaMed2.html', puntaje=puntuacion, respuesta = answ1, statusAnsw=statusAnsw)
+    else:
+        return redirect('/login')
+
+@app.route('/medP3', methods=["POST","GET"])
+def medP3():
+    if(compruebaCookie()):
+        hash=request.cookies.get('cookie_key')
+        email=request.cookies.get('email_user')
+        answ1 = request.form.get('answ1')
+        
+        if(answ1 == None or answ1 == ''):
+            return render_template('pruebaMed3.html')
+        
+        else:
+            puntuacion=0
+            statusAnsw = 'Error'
+            if(str(answ1) == 'b'):
+                puntuacion += 250
+                statusAnsw = 'Acierto'
+                puntosAnt = controlador_db.obtienePuntos(hash,email)
+                puntosNew = puntosAnt+puntuacion
+                controlador_db.actualizaPuntos(hash,email,puntosNew)
+            return render_template('resultadoPruebaMed3.html', puntaje=puntuacion, respuesta = answ1, statusAnsw=statusAnsw)
+    else:
+        return redirect('/login')
+
+@app.route('/hard',methods=["POST","GET"])
+def hard():
+    if(compruebaCookie()):
+        answ1 = request.form.get('answ1')
+        answ2 = request.form.get('answ2')
+        answ3 = request.form.get('answ3')
+        hash=request.cookies.get('cookie_key')
+        email=request.cookies.get('email_user')
+        if((answ1 == None or answ1 == '') or (answ2 == None or answ2 == '') or (answ3 == None or answ3 == '')):
+            return render_template('retoHard.html')
+        
+        else:
+            puntuacion=0
+            statusAnswA = 'Error'
+            statusAnswB = 'Error'
+            statusAnswC = 'Error'
+            bienA = 'aba'
+            bienB = 'bcc'
+            bienC = 'cab'
+            
+            if(str(answ1) == bienA):
+                puntuacion += 250
+                statusAnswA = 'Acierto'
+            if(str(answ2) == bienB):
+                puntuacion += 250
+                statusAnswB = 'Acierto'
+            if(str(answ3) == bienC):
+                puntuacion += 250
+                statusAnswC = 'Acierto'
+            puntosAnt = controlador_db.obtienePuntos(hash,email)
+            puntosNew = puntosAnt+puntuacion
+            controlador_db.actualizaPuntos(hash,email,puntosNew)
+            return render_template('resultadoHard.html', puntaje=puntuacion, respuesta1 = answ1, respuesta2 = answ2, respuesta3 = answ3, statusAnswA=statusAnswA, statusAnswB=statusAnswB, statusAnswC=statusAnswC)
     else:
         return redirect('/login')
 
@@ -394,9 +729,8 @@ def perfil():
         puntos = request.form.get('puntuacion')
         if(puntos!=None):
             total = int(puntos) + int(puntosAnt)
-            controlador_db.actualizaPuntos(hash,email,total)
-            return render_template('perfil.html',name=nick, puntosAntCuestionario=puntos, puntosTotales=total)
-        return render_template('perfil.html',name=nick, puntosAntCuestionario=0,puntosTotales=puntosAnt)
+            return render_template('perfil.html',name=nick, puntosTotales=total)
+        return render_template('perfil.html',name=nick, puntosTotales=puntosAnt)
     else:
         return redirect('/login')
 @app.route('/logout')
@@ -446,6 +780,14 @@ def introduceOTP():
             return redirect('/')
         else:
             return redirect('/register')
+@app.route('/resendOTP2', methods=["GET","POST"])
+def resend2():
+    numOTP=random.randint(100000,999999)
+    '''reenviar otro codigo'''
+    
+    enviarCorreoRec(correoOTP)
+    return redirect('/introOTP2')
+
 
 @app.route('/resendOTP', methods=["GET","POST"])
 def resend():
@@ -461,8 +803,10 @@ def resend():
 
 @app.route('/tutorialFirma', methods=["POST","GET"])
 def tutorialFirma():
-    return render_template('tutoECDSA.html')
-
+    if(compruebaCookie()):
+        return render_template('tutoECDSA.html')
+    else:
+        return redirect('/login')
 '''---------------------------------------------------------------------------'''
 '''Aqui estan las rutas para el graficador en caso de que no estemos logueados'''
 '''---------------------------------------------------------------------------'''
@@ -516,5 +860,5 @@ def multiDiscrLog():
 
 if __name__ == '__main__':
     leeEInicializa()
-    app.run(host="192.168.1.65", port=5000, debug=True)
+    app.run(host="192.168.1.65", port=5000)
     

@@ -9,11 +9,11 @@
         <div class="card border-white mb-3" style="margin-left: 10px; margin-right: 10px;">
             <div class="card-body">
                 <h1 class="card-title" style="text-align: left;">¿Que es ECDSA?</h1>
-                <p class="card-text">
+                <p class="card-text" style="font-size:20px">
                     El algoritmo de firma digital con curva elíptica, ECDSA, es una variante del algoritmo de firma DSA utilizado para verificar cierta información, pero no para cifrarla. La diferencia del ECDSA
                     con respecto al DSA es, que el ECDSA utiliza operaciones sobre puntos de curvas elípticas y el DSA emplea exponenciaciones, con el fin de aprovecharse del problema del logaritmo discreto
                 </p>
-                <p class="card-text">
+                <p class="card-text" style="font-size:20px">
                     La <b>principal ventaja del ECDSA</b> es que se requieren valores de tamaño menor para ofrecer la misma seguridad que el algoritmo DSA o el RSA.
                 </p>
             </div>
@@ -21,63 +21,81 @@
         <div class="card border-white mb-3">
             <div class="card-body">
                 <h1 class="card-title" style="text-align: left;">¿Que necesitamos para firmar un mensaje con ECDSA?</h1>
-                <p class="card-text">
-                    Lo primero es obtener un par de claves pública y privada. La clave privada es un numero <b>secreto</b> que únicamente lo conoce el creador, en relación a su uso respecto al ECDSA, es utilizado
+                <p class="card-text" style="font-size:20px">
+                    Lo primero es obtener un par de claves pública y privada. La clave privada es un número <b>secreto</b> que únicamente lo conoce el creador, en relación a su uso respecto al ECDSA, es utilizado
                     para firmar los mensajes a nombre del propietario. Por ejemplo, en el criptosistema de Bitcoin, alguien que posea una clave privada de una cartera con fondos es el único que puede gastarlos.
                 </p>
-                <p class="card-text">
-                    Sin embargo, la clave pública es un número generado a partir de la clave privada y solo se puede obtener saliendo el valor de la clave publica con anterioridad, el fin de esta clave pública es compartirla
+
+                <p class="card-text" style="font-size:20px">
+                    Sin embargo, la clave pública es un número generado a partir de la clave privada, corresponde a la multiplicación de la clave privada con el generador de la curva, el fin de esta clave pública es compartirla
                     públicamente para que terceros puedan comprobar la veracidad de nuestra firma<br>
-                    <h4>Cálculo de par de claves forma teórica</h4>
+                </p>
+
+                <h4>Cálculo de par de claves forma teórica</h4>
+
+                <p class="card-text" style="font-size:20px">    
                     Los pasos para generar un par de claves es el siguiente: <br>
                     &nbsp&nbsp&nbsp1 --> Seleccionar una curva elíptica que denominaremos con la letra <b>E</b><br>
-                    &nbsp&nbsp&nbsp2 --> Seleccionar un punto <b>P</b> perteneciente a E de orden n siendo n el orden de la curva (número de puntos de la EC)<br>
-                    &nbsp&nbsp&nbsp3 --> Seleccionar aleatoriamente un numero <b>d</b> en el intervalo <b>[1,n-1]</b><br>
-                    &nbsp&nbsp&nbsp4 --> Calculamos la clave pública <b>Q</b> de la forma <b>Q = dP</b><br>
-                    &nbsp&nbsp&nbsp5 --> Fin del proceso, <b>d</b> sera nuestra clave privada y <b>Q</b> será nuestra clave pública<br><br>
-                    <h4>Cálculo de par de claves con OpenSSL</h4>
+                    &nbsp&nbsp&nbsp2 --> Seleccionar un punto <b>G</b> perteneciente a E de orden n siendo n el orden de la curva (número de puntos de la EC)<br>
+                    &nbsp&nbsp&nbsp3 --> Seleccionar aleatoriamente un número <b>d</b> en el intervalo <b>[1,n-1]</b><br>
+                    &nbsp&nbsp&nbsp4 --> Calculamos la clave pública <b>Q</b> de la forma <b>Q = dG</b><br>
+                    &nbsp&nbsp&nbsp5 --> Fin del proceso, <b>d</b> será nuestra clave privada y <b>Q</b> será nuestra clave pública<br><br>
+                </p>
+                
+                <h4>Cálculo de par de claves con OpenSSL</h4>
+
+                <p class="card-text" style="font-size:20px">    
                     Este es el método teórico, a efectos prácticos, el proceso de creación del par de claves con la herramienta de OpenSSL es el siguiente:<br>
                     &nbsp&nbsp&nbsp1 --> Comprobamos las curvas soportadas por OpenSSL ejecutando el comando <b>openssl ecparam -list_curves</b><br>
                     &nbsp&nbsp&nbsp2 --> Para crear la clave privada ejecutamos el comando <b>openssl ecparam -name "nombre_de_la_curva" -genkey -noout "clave_privada.pem"</b><br>
                     &nbsp&nbsp&nbsp3 --> Para crear la clave pública ejecutamos el comando <b>openssl ec -in "clave_privada.pem" -pubout -out "clave_pública.pem"</b><br>
                     
                 </p>
-                <p class="card-text">
+
+                <p class="card-text" style="font-size:20px">
                     Una vez somos poseedores de una par de claves pública y privada, procedemos a firmar un mensaje con el algoritmo ECDSA con nuestra clave privada:<br>
-                    Los parámetros vienen especificados (normalmente) como el sexteto <b>E=(p,a,b,G,n,h)</b> o, por el octeto <b>E=(p,a,b,G,n,h,S)</b> siendo S un numero generado aleatoriamente denominado seed que tiene el fin
+                    Los parámetros vienen especificados (normalmente) como el sexteto <b>E=(p,a,b,G,n,h)</b> o, por el octeto <b>E=(p,a,b,G,n,h,S)</b> siendo S un número generado aleatoriamente denominado seed que tiene el fin
                     de que el creador de la curva elíptica no la haya diseñado para que posteriormente la vulnere. Los parámetros ya fueron definidos en el apartado de <a href='/logged/teoria' style="text-decoration: none">teoría</a><br>
                 </p>
-                <p class="card-text">
+                <p class="card-text" style="font-size:20px">
                     El proceso de firma con el algoritmo de ECDSA consiste en calcular un par <b>(r,s)</b> que serán la firma de un mensaje <b>M</b>, donde, gracias a las propiedades de las curvas elípticas, tambien será
                     válido el par <b>(r,-s)</b>.<br>
-                    <h4>Cálculo de firma y verificación de firma de forma teórica</h4>
-                    <h5>Cálculo de firma de forma teórica</h5>
+                </p>
+
+                <h4>Cálculo de firma y verificación de firma de forma teórica</h4>
+                <h5>Cálculo de firma de forma teórica</h5>
+                <p class="card-text" style="font-size:20px">
                     El procedimiento para calcular la firma de un mensaje es el siguiente:<br>
-                    Previamente calculamos <b><math>m = H(M)</math></b>, que es el valor resultante a aplicar el algoritmo SHA256 a nuestro mensaje<br>
-                    &nbsp&nbsp&nbsp1 --> Seleccionamos un numero <b><math>k</math></b> de forma aleatoria dentro del intervalo cerrado entre <b><math>[1, n-1]</math></b><br>
-                    &nbsp&nbsp&nbsp2 --> Calculamos <b><math>P = kG = (x1,y1)</math></b>, nos proporciona un punto dentro de la curva siendo G el punto generador.<br>
-                    &nbsp&nbsp&nbsp3 --> Calculamos el valor de <b>r</b> de la manera <b><math>r = x1 mod n</math></b> tratando el valor de x1 como un entero. Si <math>r <mo>=</mo> 0</math>, se regresa al primer paso<br>
-                    &nbsp&nbsp&nbsp4 --> Calculamos el valor de <b>s</b> de la manera <b><math>s = <msup><mi>k</mi><mn>-1</mn></msup>( m + rd ) mod n</math></b> siendo H(M) el mensaje encriptado con funcion hash y d la clave privada del firmante previamente calculada. Si <math>s<mo>=</mo>0</math>,
+                    Previamente calculamos <b>m = H(M)</b>, que es el valor resultante a aplicar el algoritmo SHA256 a nuestro mensaje<br>
+                    &nbsp&nbsp&nbsp1 --> Seleccionamos un numero <b>k</b> de forma aleatoria dentro del intervalo cerrado entre <b>[1, n-1]</b><br>
+                    &nbsp&nbsp&nbsp2 --> Calculamos <b><i>P = kG = (x<sub>1</sub>,y<sub>1</sub>)</i></b>, nos proporciona un punto dentro de la curva siendo G el punto generador.<br>
+                    &nbsp&nbsp&nbsp3 --> Calculamos el valor de <b>r</b> de la manera <b><i>r = x<sub>1</sub> mod n</i></b> tratando el valor de x1 como un entero. Si r <mo>=</mo> 0, se regresa al primer paso<br>
+                    &nbsp&nbsp&nbsp4 --> Calculamos el valor de <b>s</b> de la manera <b><i>s = k<sup>-1</sup>(m + dr) mod n</i></b> m el mensaje encriptado con la funcion hash y d la clave privada del firmante previamente calculada. Si s<mo>=</mo>0,
                     se regresa al primer paso.<br>
-                    Al final de este procedimiento, el par <b><math>(r,s)</math></b> es la firma, y el par <b><math>(r,-s)</math></b> también será una firma válida, dado que la representación de los puntos en un plano discreto es simétrica.<br><br>
-                    <h5>Verificación de firma de forma teórica</h5>
+                    Al final de este procedimiento, el par <b>(r,s)</b> es la firma, y el par <b>(r,-s)</b> también será una firma válida, dado que la representación de los puntos en un plano discreto es simétrica.<br><br>
+                </p>
+
+                <h4>Verificación de firma de forma teórica</h4>
+                <p class="card-text" style="font-size:20px">
                     El procedimiento para verificar esta firma que hemos calculado anteriormente es el siguiente:<br>
                     &nbsp&nbsp&nbsp1 --> Verificamos que los valores de r y s se encuentran dentro del rango de valores entre 1 y n-1.<br>
-                    &nbsp&nbsp&nbsp2 --> Calculamos el valor <b><math>w <mo>=</mo><msup><mi>s</mi><mn>-1</mn></msup> mod n</math></b> que se utilizará posteriormente.<br>
+                    &nbsp&nbsp&nbsp2 --> Calculamos el valor <b><i>w = s<sup>-1</sup> mod n</i></b> que se utilizará posteriormente.<br>
                     &nbsp&nbsp&nbsp3 --> Calculamos los valores de u1 y u2 de la manera:<br>
-                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- <b><math>u1 = mw mod n</math></b> siendo m la huella del mensaje.<br>
-                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- <b><math>u2 = rw mod n</math></b>.<br>
-                    &nbsp&nbsp&nbsp4 --> Calculamos <b><math>u1P +u2Q = (x0,y0)</math></b> donde P es el valor previamente calculado y Q la clave pública del firmante.<br>
-                    &nbsp&nbsp&nbsp5 --> Calculamos un valor de v de la manera <b><math>v = x0 mod n</math></b><br>
-                    La firma será verificada únicamente si <b><math>v <mo>=</mo> r</math></b>.<br><br> <b>Lo importante del proceso de firmado y verificación es que para el firmado de un elemento es necesaria la clave privada, y para la verificación es necesaria la clave pública del firmante</b><br><br>
-                    <h4>Cálculo de firma y verificación de firma con OpenSSL</h4>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- <b><i>u<sub>1</sub> = mw mod n</i></b> siendo m la huella del mensaje.<br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- <b><i>u<sub>2</sub> = rw mod n</i></b>.<br>
+                    &nbsp&nbsp&nbsp4 --> Calculamos <b><i>u<sub>1</sub>G + u<sub>2</sub>Q = (x<sub>0</sub>,y<sub>0</sub>)</i></b> donde G es el punto base de la curva y Q es la clave pública del firmante.<br>
+                    &nbsp&nbsp&nbsp5 --> Calculamos un valor de v de la manera <b><i>v = x<sub>0</sub> mod n</i></b><br>
+                    La firma será verificada únicamente si <b>v <mo>=</mo> r</b>.<br><br> <b>Lo importante del proceso de firmado y verificación es que para el firmado de un elemento es necesaria la clave privada, y para la verificación es necesaria la clave pública del firmante</b><br><br>
+                </p>
+                <h4>Cálculo de firma y verificación de firma con OpenSSL</h4>
+                <p class="card-text" style="font-size:20px">
                     El procedimiento para firmar un fichero con el algoritmo ECDSA utilizando la herramienta de OpenSSL es el siguiente:<br>
                     &nbsp&nbsp&nbsp1 --> Para firmar cierto fichero, se utiliza el comando <b>openssl dgst -sha256 -sign "clave_privada".pem "fichero" > "firma.bin"</b><br>
                     &nbsp&nbsp&nbsp2 --> Para verificar la firma de cierto fichero firmado se utiliza el comando <b>openssl dgst -sha256 -verify "clave_pública.pem" -signature "firma.bin" "fichero"</b><br>
                 </p>
                 <div class="col text-center">
                     <p class="card-text" style="font-size: 20px;">
-                        A continuacion, se ofrece un simulador de firma de mensaje con la curva eliptica <b>secp256k1</b> que es la que usa el criptosistema de Bitcoin
+                        A continuación, se ofrece un simulador de firma de mensaje con la curva eliptica <b>secp256k1</b> que es la que usa el criptosistema de Bitcoin
                   </p>  
                   <a href="/generadorFirmas"><button class="btn btn-outline-secondary mb-3" style="border-radius: 40px; ;" type="button">Simulador</button></a>
                   <a href="/validadorFirmas"><button class="btn btn-outline-secondary mb-3" style="border-radius: 40px; ;" type="button">Validador</button></a></div>

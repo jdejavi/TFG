@@ -1,7 +1,6 @@
-{% extends "layoutNoLog.html" %}
+{% extends "layoutLogueado.html" %}
 
 {% block content%}
-<!--Titulo de la informacion de la teoria de las curvas elipticas-->
 <section id="titulo" class="jumbotron text-center">
     <h2 class="display-4" style="margin-top: 25px;">Teoría acerca de las <b>EC</b> aplicadas a la criptografía</h2>
 </section>
@@ -23,34 +22,9 @@
                     esta ecuación de arriba conforma la forma normal de las curvas elípticas de Weierstrass.
                 </p>
                 <p class="card-text">
-                    Las curvas elípticas tienen unas características, son:<br>
-                    &nbsp&nbsp&nbsp - Son <b>simétricas</b> respecto al eje X<br>
-                    &nbsp&nbsp&nbsp - Necesitamos un punto en el infinito, que será representado con un 0<br><br>
-                    Sobre la curva elíptica definimos un grupo con las características:<br>
-                    &nbsp&nbsp&nbsp - Los elementos del grupo son los puntos de la ECC<br>
-                    &nbsp&nbsp&nbsp - El elemento identidad es el punto definido en el infinito, el '0'<br>
-                    &nbsp&nbsp&nbsp - Debido a que las curvas son simétricas respecto al eje X, el inverso de un punto P es el simétrico<br>
-                    &nbsp&nbsp&nbsp - Se define una <b>operación suma</b> de la siguiente manera:<br>
-                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp - Dados 3 puntos P, Q, R alineados y no cero:<br>
-                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp - La suma de estos tres puntos <b>P+Q+R = 0</b>, es decir, si estos 3 puntos estan alineados se cumplen las propiedades de asociatividad y conmutatividad<br>
-                    &nbsp&nbsp&nbsp - Gracias a la simetría del eje X, si ponemos esta suma como <b>P+Q = -R</b> tendremos que como los puntos estan alineados, esta recta hará una intersección en un punto de la curva y su inverso sera el resultado de P+Q<br>
-                    Podéis realizar sumas en el <a href="/graficador/adicionReales"  style="text-decoration: none;">sumador</a> disponible en la web
+                    La forma en la que nuestra curva irá cambiando de forma dependerá de los diferentes valores de las variables 'a' y 'b', también consideraremos un punto en el infinito
+                    al cual denotaremos con el '0', la descripción de las curvas elípticas normales de Weierstrass completa incluyendo el punto en el infinito es la siguente: <img src="/static/ec4.png" class="card-img" style="width: 260px; height: 30px;"/><img src="/static/ec5.png" class="card-img" style="width: 190px; height: 30px;"/>
                 </p>
-                <p class="card-text">
-                    La forma en la que nuestra curva irá cambiando de forma dependerá de los diferentes valores de las variables 'a' y 'b',
-                     la descripción de las curvas elípticas normales de Weierstrass completa incluyendo el punto en el infinito es la siguiente: <img src="/static/ec4.png" class="card-img" style="width: 260px; height: 30px;"/><img src="/static/ec5.png" class="card-img" style="width: 190px; height: 30px;"/>
-                </p>
-                <p class="card-text">
-                    Sin embargo, si decidimos definir nuestras curvas elípticas sobre un campo finito <i>F<sub>p</sub><sup>2</sup></i>, ahora describen la ecuación: <img src="/static/ec6.PNG" style="width: 20%; height: 15%;"/><img src="/static/ec7.PNG" style="width: 14%; height: 15%;"/>
-                    ahora su representación consiste en una serie de puntos sobre un plano x-y, pero tiene las mismas propiedades anteriormente mencionadas.<br> Una 'línea' en <i>F<sub>p</sub></i> es un par de puntos (x,y) que hacen 0 la ecuación módulo p.<br>
-                    Hemos definido a las curvas elípticas sobre <i>F<sub>p</sub></i> como un conjunto de puntos,<b>¿pero cuántos?</b><br><br>
-                    La cantidad de numeros de una curva se denomina <b>órden del grupo</b>. En cuanto a definición de operaciones, la suma es prácticamente igual a la descrita anteriormente, mientras que la multipliación tiene una peculiaridad:<br>
-                    Si intentamos calcular los múltiplos de un punto, llegará un momento que los puntos obtenidos se empiecen a repetir de forma cíclica.<br> Entonces, se podría definir al grupo que forman los múltiplos de un número P como un <b>subgrupo cíclico</b> del grupo de la curva elíptica
-                    A partir de este momento, podremos formar subgrupos con la finalidad de encontrar un subgrupo que contenga a todo el grupo, es decir, que el grupo formado a partir de un punto que denominaremos <b>generador de la curva</b> abarque el mayor número de puntos posibles.
-
-                </p>
-                
-                
                 <p class="card-text">Los puntos singulares son aquellos en donde la derivada parcial de la funcion en ese punto es 0, básicamente es una solución al sistema de ecuaciones de la EC.<br></p>
                 <p class="card-text">Los parámetros para definir una curva elíptica son los siguientes:</p>
                 <p class="card-text">&nbsp&nbsp&nbsp - El número primo <b>p</b> que especifica el tamaño del campo finito</p>
@@ -82,7 +56,8 @@
                     &nbsp&nbsp&nbsp&nbsp&nbsp256bits&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp3072bits<br>
                     &nbsp&nbsp&nbsp&nbsp&nbsp384bits&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp7680bits<br>
                     &nbsp&nbsp&nbsp&nbsp&nbsp521bits&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp15360bits<br>
-                    Una de las ventajas acerca de este menor tamaño de clave es que el factor de que proporciona la misma seguridad, lo pueden hacer que resulte mucho mas eficiente en sistemas con poco ancho de banda.
+                    Este tipo de criptografía ha sido reconocido como el algoritmo mas fuerte respecto a los tamaños de clave que maneja. El factor de que proporcione la misma seguridad con menor tamaño de clave,
+                    lo pueden hacer que resulte mucho mas eficiente en sistemas con poco ancho de banda.
 
                 </p>
                 <p class="card-text"> Este apartado es una breve introducción a las curvas elípticas, para más información podéis acceder a estos enlaces:<br>

@@ -28,3 +28,7 @@ html, body {
     font-family: 'Lato', sans-serif;
     color: black;
 }
+
+input::placeholder{
+    font-size: 0.9em;
+}

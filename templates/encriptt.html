@@ -46,12 +46,25 @@
                 </div>
             </div>
         </div>
+
+        <div class="card bg-dark text-white" style="margin-top: 50px;margin-left: 40px; border-radius: 1rem; width: fit-content;">
+            <div class="card-body text-left">
+                <div id="msgEncripted" >
+                    <p style="font-size: 35px; text-align: center;">Mensaje cifrado enviado por Alice</p>
+                    <p style="font-size: 25px; text-align: center;">{{msgEncAlice}}</p>
+                    <p style="font-size: 35px; text-align: center;">Mensaje cifrado enviado por Bob</p>
+                    <p style="font-size: 25px; text-align: center;">{{msgEncBob}}</p>
+                </div>
+            </div>
+        </div>
+
         <div class="card bg-dark text-white" style="margin-top: 50px; border-radius: 1rem; width: fit-content;">
             <div class="card-body text-left">
                 <div id="dataComún" >
                     <form action="/cifrador" class="form-white mb-4" style="text-align: center" method="post">
                         <input type="message" style="visibility: hidden; display: none;" name="cambiaClaves" value="cambiaK"></input>
                         <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px" type="submit">Cambia claves</button>
+                        
                     </form>
                     <p style="font-size: 25px; text-align: center;">Parámetros de Alice</p>
                     <p style="font-size: 15px; text-align: center;">Clave pública de Alice: {{kuAlice}}</p>

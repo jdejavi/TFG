@@ -3,6 +3,7 @@
 {% block content %}
 
 <section id="preguntas">
+    <h3>Dificultad del cuestionario {{dificultad}}</h3>
     <form action='/perfil' class="form-white mb-4" style="text-align: center;" method="post">
         <div class="card" style="border: none">
             <input type="message" style="visibility: hidden; display: none;" name="puntuacion" value="{{puntaje}}"></input>
@@ -11,8 +12,8 @@
               <h2 class="card-title" style="text-align: center; margin-top: 2%;">Pregunta 1</h2>
               <p>{{preguntaE1}}<br></p>
               <p>{{resp11}}<br>{{resp12}}<br>{{resp13}}</p>
-              
-                <p class="text-muted" style="text-align: center;">Respuesta a la pregunta 1: {{letra1}}, {{resPreg1}}</p> 
+                <p class="text-muted" style="text-align: center;">Respuesta correcta a la pregunta 1: {{corr1}}</p>
+                <p class="text-muted" style="text-align: center;">Opción elegida: {{letra1}}, {{resPreg1}}</p> 
                 
               
             
@@ -23,8 +24,8 @@
               <h2 class="card-title" style="text-align: center; margin-top: 2%;">Pregunta 2</h2>
               <p>{{preguntaE2}}</p>
               <p>{{resp21}}<br>{{resp22}}<br>{{resp23}}</p>
-              
-                <p class="text-muted" style="text-align: center;">Respuesta a la pregunta 2: {{letra2}}, {{resPreg2}}</p> 
+                <p class="text-muted" style="text-align: center;">Respuesta correcta a la pregunta 2: {{corr2}}</p>
+                <p class="text-muted" style="text-align: center;">Opción elegida: {{letra2}}, {{resPreg2}}</p> 
                 
               
             </div>
@@ -35,8 +36,8 @@
               <h2 class="card-title" style="text-align: center; margin-top: 2%;">Pregunta 3</h2>
               <p>{{preguntaE3}}</p>
               <p>{{resp31}}<br>{{resp32}}<br>{{resp33}}</p>
-              
-                <p class="text-muted" style="text-align: center;">Respuesta a la pregunta 3: {{letra3}}, {{resPreg3}}</p> 
+                <p class="text-muted" style="text-align: center;">Respuesta correcta a la pregunta 3: {{corr3}}</p>
+                <p class="text-muted" style="text-align: center;">Opción elegida: {{letra3}}, {{resPreg3}}</p> 
                 
               
             </div>

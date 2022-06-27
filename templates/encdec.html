@@ -8,10 +8,10 @@
     <div class="contenedor">
         <div class="card border-white mb-3" style="margin-left: 10px; margin-right: 10px;">
             <div class="card-body">
-                <h3>Procedimiento de cifrado de mensaje con curva eliptica</h3>
-                <p class="card-text">
+                <h3>Procedimiento de cifrado de mensaje con curva elíptica</h3>
+                <p class="card-text" style="font-size:20px">
                     Para cifrar mensajes utilizando criptografía de curva elíptica, suponemos que nuestros dos protagonistas, Alice y Bob, tienen cada uno su par de claves
-                    pública y privada, además de ser conocedores del valor del generador de la curva (g)<br>
+                    pública y privada, además de ser conocedores del valor del generador de la curva (G)<br>
                     Los pasos para cifrar serían los siguientes:<br>
                     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp1- Procedemos a la obtención del secreto compartido obtenido con el algoritmo ECDH<br>
                     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp3- Ciframos los mensajes de forma simétrica con el secreto calculado, con el algoritmo de AES-EAX<br>
@@ -22,19 +22,19 @@
                             &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- El texto propiamente cifrado, que irá desde donde acaba el MAC hasta el final<br>
                     </p>
                     <h4>¿Qué es ECDH?</h4>
-                    <p class="card-text">
-                        Inicialmente explicaremos que es el algoritmo <b>ECDH</b> y porqué es necesario para esta implementación, el agoritmo ECDH es un protocolo de intercambio de claves donde las dos partes 
-                        que van a compartir la clave tienen en su poder un par de claves publica y privada, se produce una clave derivada la cual se puede usar para cifrar otros mensajes con un protocolo de cifrado
+                    <p class="card-text"  style="font-size:20px">
+                        Inicialmente explicaremos que es el algoritmo <b>ECDH</b> y porqué es necesario para esta implementación, el algoritmo ECDH es un protocolo de intercambio de claves donde las dos partes 
+                        que van a compartir la clave tienen en su poder un par de claves pública y privada, se produce una clave derivada la cual se puede usar para cifrar otros mensajes con un protocolo de cifrado
                         simétrico o de clave secreta.
-                        En nuestro caso, lo primero que haremos sera calcular nuestra clave ECDHA sobre la curva secp256k1.<br>
-                        Para calcularlo de manera manual, deberemos tener dos pares de claves publica y privada, generadas con la curva elíptica secp256k1, supongamos que:<br>
-                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Alicia tiene el par<b> k1 = (da,Qa)</b> siendo da la clave privada y Qa la clave pública de Alicia<br>
-                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Alberto tiene el par<b> k2 = (db,Qb)</b> siendo db la clave privada y Qb la clave pública de Alberto<br>
-                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Alicia calcula el punto <b>(xk,yk)=da*Qb</b> y Alberto calcula el punto <b>(xk,yk)=db*Qa</b><br>
-                        El secreto compartido es el <b>xk</b>, dado que se cumple que <b>da*Qb = da*db*G = db*da*G = db*Qa</b> y la única informacion que se expone es la clave pública.
+                        En nuestro caso, lo primero que haremos sera calcular nuestra clave ECDH sobre la curva secp256k1.<br>
+                        Para calcularlo de manera manual, deberemos tener dos pares de claves pública y privada, generadas con la curva elíptica secp256k1, supongamos que:<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Alice tiene el par <b><i>(d<sub>A</sub>, Q<sub>A</sub>)</i></b> siendo <b><i>d<sub>A</sub></i></b> la clave privada y <b><i>Q<sub>A</sub></i></b> la clave pública de Alice<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Bob tiene el par <b><i>(d<sub>B</sub>, Q<sub>B</sub>)</i></b> siendo <b><i>d<sub>B</sub></i></b> la clave privada y <b><i>Q<sub>B</sub></i></b> la clave pública de Bob<br>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- Alice calcula el punto <b><i>(x<sub>k</sub>,y<sub>k</sub>) = d<sub>A</sub>Q<sub>B</sub></i></b> y Bob calcula el punto <b><i>(x<sub>k</sub>,y<sub>k</sub>) = d<sub>B</sub>Q<sub>A</sub></i></b><br>
+                        El secreto compartido es el <b><i>x<sub>k</sub></i></b>, dado que se cumple que <b><i>d<sub>A</sub>Q<sub>B</sub> = d<sub>A</sub>d<sub>B</sub>G = d<sub>B</sub>d<sub>A</sub>G = d<sub>B</sub>Q<sub>A</sub></i></b> y la única información que se expone es la clave pública.
                     </p>
                     <h4>¿Qué es el AES?</h4>
-                    <p class="card-text">
+                    <p class="card-text"  style="font-size:20px">
                         El algoritmo de cifrado simétrico AES (Advanced Encryption Standard) es un esquema de cifrado por bloques adoptado como un estándar de cifrado, dado que es un algoritmo
                         rápido tanto en software como en hardware, es fácil de implementar y precisa de poca memoria.<br>
                         Las <b>características</b> del algoritmo AES son las siguientes:<br>
@@ -60,7 +60,7 @@
                 </p>
                 <div class="col text-center">
                     <p class="card-text" style="font-size: 20px;">
-                        A continuacion se proporciona de simulador de encriptado que utiliza la curva <b>secp256k1</b> y el <b>AES-EAX</b> donde se puede simular una conversacion entre Alice y Bob,
+                        A continuación se proporciona de simulador de encriptado que utiliza la curva <b>secp256k1</b> y el <b>AES-EAX</b> donde se puede simular una conversación entre Alice y Bob,
                         con la capacidad de mandarse mensajes entre ellos y decodificarlos de una manera segura y confidencial:
                   </p>  
                   <a href="/cifrador"><button class="btn btn-outline-secondary mb-3" style="border-radius: 40px; ;" type="button">Simulador</button></a>

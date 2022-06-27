@@ -17,11 +17,14 @@ bd='b6sembtlcyhj27os1pwp'
 hostUrl='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com'
 
 def insertar_usuarioNoDef(nombre,apellidos,mail,nickname,passwd,conf):
+
    connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
                            user='ucprxfshxavxruqm',
                            password='zNSwEFVIYhtaOcQyA03O',
                            db='b6sembtlcyhj27os1pwp')
+
    cursor=connection.cursor()
+
    if(cursor):
        print('DB conectada user no def')
        '''Aqui hago una comprobacion de que el correo no existe ya, si no existe lo añado pero si no existe no'''
@@ -60,6 +63,26 @@ def update_usuario(mail,conf):
    else: 
        print('No se conecto a la Db')
        return False
+
+def update_passwd(mail,passwd):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+   cursor=connection.cursor()
+   if(cursor):
+       print('DB conectada user def')
+       update = "UPDATE usuarios SET passwd=%s WHERE mail=%s;"
+       cursor.execute(update,(passwd,mail))
+       connection.commit()
+       connection.close()
+       
+       print('Update exitosa de la contraseña de un usuario')
+       return True
+   else: 
+       print('No se conecto a la Db')
+       return False
+
 
 def hashUsuario(hash):
    connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',

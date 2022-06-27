@@ -1,0 +1,25 @@
+{% extends "layoutNoLog.html" %}
+
+{% block content%}
+<section class="vh-100 bg-light">
+    <div class="container py-4 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-md-5 mt-md-4 pb-5">
+                            <h2 class="fw-bold">Introduce el correo electrónico</h2>
+                            <p class="text-white mb-3 text-muted">Se te mandará un código de 8 dígitos para cambiar la contraseña</p>
+
+                            <form action='/recovery' class="form-white mb-4" method="post">
+                                <p class="text-muted" style="text-align: left;">Correo electrónico</p> 
+                                <input type="code" name="mailLost" class="form-control form-control-lg mb-3" placeholder="Introduce el correo electrónico"/>
+                                <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px;" type="submit">Siguiente</button>
+                            </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "layoutLogueado.html" %}
+
+{% block content %}
+<section id="preguntas">
+    <form action='/perfil' class="form-white mb-4" style="text-align: center;" method="post">
+      <input type="message" style="visibility: hidden; display: none;" name="puntuacion" value="{{puntaje}}"></input>
+      <div class="card" style="border: none">
+          <div class="card-body">
+            <h1 class="card-title" style="text-align: center; margin-top: 2%;">Resultados de la prueba media 2</h1>
+            <h2 style="margin-top: 1%">La puntuación final ha sido de : {{puntaje}}</h2>
+            <p style="font-size: 25px; text-align: center;"><br><br>Nos han firmado un mensaje, pero la firma se ha visto afectada dado a que se transmitió por un canal de comunicación no fiable,
+                ¿Nos podrías determinar que clave pública de todas es la correcta?:<br>
+            </p>
+
+              <p style="font-size: 25px; text-align: center;">
+                    <b>Mensaje enviado -> Prueba media 2</b><br><br>
+                    <b>Par (r,s) -> (47669024406123730165609180655690949993348053536441293817264558770966303247885, 97318173033164708276594397256139721877529048808203837431231909597322462698245)</b><br><br></p>
+                    <p style="font-size: 25px; text-align: center;">Por otro lado tenemos estas tres opciones para la clave pública:<br>
+              </p>
+                
+              <p style="font-size: 25px; text-align: center;"><b>Opción a:</b> (20033756032618556821905574551848929427606879333099794469766278348411230682743, 49273698421322628886059480872971927508997771409418569699964598190369705619271)</p>
+              <p style="font-size: 25px; text-align: center;"><b>Opción b:</b> (49273698421322628886059480872971927508997771409418569699964598190369705619271, 20033756032618556821905574551848929427606879333099794469766278348411230682743)</p>
+              <p style="font-size: 25px; text-align: center;"><b>Opción c:</b> (20033756032618556821905574551848929427616879333099784469766278346411230682744, 49273698421322628886052480872971927508997771509418569699964598190769705611271)<br></p>
+              <p style="font-size: 30px; text-align: center;"></p>
+                
+              <p style="font-size: 30px; text-align: center;">¿Podrías indicar que clave pública es la correcta?</p>
+
+              <form action='/medP2' class="form-white mb-4" style="text-align: center;" method="post">
+                <p class="text-muted" style="text-align: center;">Respuesta correcta a la pregunta: a</p>
+                <p class="text-muted" style="text-align: center;">Respuesta contestada: {{respuesta}}, {{statusAnsw}}</p>
+                <div class="col text-center">
+                    <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px;" type="submit">Volver al perfil</button>
+                </div>
+              </form>
+            
+          </div>
+
+        </div>
+
+    </form>
+        
+</section>
+{% endblock %}

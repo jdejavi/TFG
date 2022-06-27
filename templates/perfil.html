@@ -3,7 +3,6 @@
 {% block content%}
 <section id="header" class="jumbotron text-center">
     <h1 class="display-3">¡Bienvenido al perfil {{name}}!</h1>
-    <h4> Puntos obtenidos en el ultimo cuestionario: {{puntosAntCuestionario}}</h4>
     <h4> Puntos totales: {{puntosTotales}}</h4>
 </section>
 
@@ -11,40 +10,40 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-4 mb-4">
-      <div class="card">
-        
+        <div class="card">
         <div class="card-body">
-          <h2 class="card-title">Retos FACILES</h2>
-          <p class="card-text">En esta sección podremos encontrar los retos de dificultad facil de la pagina, son unos cuestionarios para afianzar toda la informacion aprendida de la página</p>
+          <h2 class="card-title" style="text-align:center">Retos FÁCILES</h2>
+          <p class="card-text">En esta sección podremos encontrar los retos de dificultad facil de la página, son unos cuestionarios para afianzar toda la información aprendida acerca de las curvas elípticas</p>
           <p style="text-align: center"><a href="/easy" class="btn btn-outline-success btn-sm">Cuestionarios</a></p>
         </div>
-       </div>
       </div>
+    </div>
+
     <div class="col-lg-4 mb-4">
-    <div class="card">
-        
+      <div class="card">
         <div class="card-body">
-          <h2 class="card-title">Retos MEDIOS</h2>
-          <p class="card-text">En esta sección encontraremos los retos de dificultad media, estarán conformados por dos cuestionarios un poco mas complicados que los anteriores, con una tercera prueba donde se hará uso de OpenSSL para firmar archivos.</p>
+          <h2 class="card-title" style="text-align:center">Retos MEDIOS</h2>
+          <p class="card-text">En esta sección encontraremos los retos de dificultad media, estarán conformados por cuestionarios un poco mas complicados que los anteriores, y un reto donde se usarán las características de la página para responder.</p>
           <p style="text-align: center"><a href="/medC" class="btn btn-outline-success btn-sm">Cuestionarios</a></p>
-          <p style="text-align: center"><a href="/medP" class="btn btn-outline-success btn-sm">Prueba </a></p>
-        </div>
-        
+          <p style="text-align: center;"><a href="/medP1" class="btn btn-outline-success btn-sm">Prueba 1</a><a href="/medP2" class="btn btn-outline-success btn-sm" style="margin-left: 1%">Prueba 2</a><a href="/medP3" class="btn btn-outline-success btn-sm" style="margin-left: 1%">Prueba 3</a></p>
+          
         </div>
       </div>
-      <div class="col-lg-4 mb-4">
+    </div>
+
+    <div class="col-lg-4 mb-4">
       <div class="card">
         
         <div class="card-body">
-          <h2 class="card-title">Retos DIFICILES</h2>
-          <p class="card-text">En esta sección encontraremos los retos de dificultad difícil, se hara uso de OpenSSL para capturar los flags ocultados bajo cifrados con ECC en ficheros, dichos flags se tendran que introducir en la pagina para validar la realización de la prueba.</p>
-          <p><a href="/hard1" class="btn btn-outline-success btn-sm">Prueba 1</a></p>
-          <p><a href="/hard2" class="btn btn-outline-success btn-sm">Prueba 2</a></p>
-          <p><a href="/hard3" class="btn btn-outline-success btn-sm">Prueba 3</a></p>
+          <h2 class="card-title" style="text-align:center">Retos DIFÍCILES</h2>
+          <p class="card-text">En esta sección encontraremos el último reto, suerte...</p>
+          <p style="text-align: center;"><a href="/hard" class="btn btn-outline-success btn-sm" >Reto Final</a></p>
+          
         </div>
        </div>
-      </div>
     </div>
+
   </div>
+</div>
 </section>
 {% endblock%}

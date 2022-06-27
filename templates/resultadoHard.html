@@ -1,0 +1,38 @@
+{% extends "layoutLogueado.html" %}
+
+{% block content %}
+
+<section id="resHard">
+    <form action='/perfil' class="form-white mb-4" style="text-align: center;" method="post">
+        <div class="card" style="border: none">
+            <input type="message" style="visibility: hidden; display: none;" name="puntuacion" value="{{puntaje}}"></input>
+            <div class="card-body">
+                <h1 class="card-title" style="text-align: center; margin-top: 2%;">Reto Final</h1>
+                <h2 style="margin-top: 1%">La puntuación final ha sido de : {{puntaje}}</h2>
+                <p style="font-size:30px; text-align:center;">Has llegado a la prueba final, el problema es el siguiente:</p>
+                <p style="font-size:20px"> ha surgido un problema en el almacenamiento, y se han desparejado tres mensajes de sus tres claves públicas
+                    y de sus correspondientes pares (r,s).¿Podrías emparejarlos de nuevo?</p>
+                <p style="font-size:20px"><b>Mensajes: </b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp a) ¿qué tal estas?&nbsp&nbsp&nbsp&nbsp&nbspb) no me has llamado&nbsp&nbsp&nbsp&nbsp&nbspc) yo estoy bien</p>
+                <p style="font-size:20px"><b>Claves públicas: </b><br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspa) (11375022328762621457410298419309472953221168300605678253316954608637537418463, 4219047957739932851791373385790051131425516824064425877653206232527817426985)<br><br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspb) (88279650640505310574608064898006465695383199040434623324242773327312073909381, 7654074567258682187269557951778285545880045487623787654033046507943846337358)<br><br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspc) (32522058128325314935856824176215660802755647073716182074080482236013683570879, 33650121372071351339653955205404489129089429138296929869399084719969809172748)<br><br></p>
+                <p style="font-size:20px"><b>Pares (r,s)</b>:<br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspa) (43905511819172355126974159788216258824801837858573652652177930415203234145543, 48012116756955300399312162906681756213783175926897650451470518925815417115445)<br><br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspb) (26874898769511554511380401870240105830544324994014359917934217795885945380006, 43406755708097011286442718355942102531283780888186762555710161119924103248570)<br><br>
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspc) (27327755345902369684690407139756132430190656172975600588030259528518774485349, 87750120538059127462582283501742790945807256975898466500168461634586634407086)<br><br>
+                    </p>
+            <form action='/hard' class="form-white mb-4" style="text-align: center;" method="post">
+                <p class="text-muted" style="text-align: center;">Respuesta correcta a la pregunta a --> aba, a la pregunta b --> bcc y a la pregunta c --> cab</p>
+                    <p class="text-muted" style="text-align: center;">Respuesta contestada: a -->{{respuesta1}}, {{statusAnswA}}<br>b --> {{respuesta2}}, {{statusAnswB}}<br>c --> {{respuesta3}}, {{statusAnswC}}</p>
+                    <div class="col text-center">
+                        <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px;" type="submit">Volver al perfil</button>
+                    </div>
+            </form>
+            
+            </div>
+        </div>
+    </form> 
+           
+</section>
+{% endblock %}

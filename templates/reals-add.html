@@ -19,10 +19,10 @@
         <ul>
           <li class="field">&#8477;</li>
           <li><a href="/graficador/adicionReales" class="active">Suma</a></li>
-          <li><a href="/graficador/multiReales">Multiplicacion</a></li>
+          <li><a href="/graficador/multiReales">Multiplicación</a></li>
           <li class="field">&#120125;<sub>p</sub></li>
           <li><a href="/graficador/adicionDiscr">Suma</a></li>
-          <li><a href="/graficador/multiDiscr">Multiplicacion</a></li>
+          <li><a href="/graficador/multiDiscr">Multiplicación</a></li>
         </ul>
       </nav>
     </header>
@@ -52,12 +52,15 @@
           </div>
         </div>
         <div id="summary">
-          <p>Suma de puntos sobre la curva eliptica <span class="curve-equation"></span> in &#8477;.</p>
+          <p>Suma de puntos sobre la curva elíptica <span class="curve-equation"></span> in &#8477;.</p>
           <p class="curve-singular-warning"><strong>Cuidado:</strong> esta curva es singular.</p>
         </div>
       </div>
     </main>
-    
+    <footer>
+      <p>Creador de la herramienta original: <a href="https://www.linkedin.com/in/andreacorbellini"> Andrea Corbellini</a>.</p>
+      <p>Software de libre uso bajo la <a href="http://opensource.org/licenses/MIT">licencia MIT</a>, enlace al <a href="https://github.com/andreacorbellini/ecc">GitHub</a>.</p>
+    </footer>
     <script type="text/javascript">
         $(function() {
             $.ec.curve = new $.ec.reals.PointAddition();

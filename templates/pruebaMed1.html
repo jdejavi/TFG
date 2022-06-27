@@ -1,0 +1,34 @@
+{% extends "layoutLogueado.html" %}
+
+{% block content %}
+<section id="preguntas">
+    
+    <div class="card" style="border: none">
+        
+        <div class="card-body">
+          <h1 class="card-title" style="text-align: center; margin-top: 2%;">Prueba media 1</h1>
+          <p style="font-size: 25px; text-align: center;"><br><br>Señala que mensaje es el que ha sido firmado de los siguientes con los datos dados:<br></p>
+          <p style="font-size: 25px; text-align: center;">
+            <b>Clave pública -> (89278427971397252480377399387636700429939291626082325260481522675734533908302, 14905276683452435151934069613099459116453141579356126863589245435844826385873)</b><br><br>
+            <b>Par (r,s) -> (34276744827479585503836039916990249197926788380128880727675952579444122613663, 40466120538589191565564557749022306152228108038261662338564170219628985943099)</b><br><br></p>
+          <p style="font-size: 25px; text-align: center;">Por otro lado tenemos estas tres opciones para el mensaje:<br>
+            </p>
+            
+            <p style="font-size: 25px; text-align: center;">Opcion a --> Probando firma ecdsa</p>
+            <p style="font-size: 25px; text-align: center;">Opcion b --> Primera prueba de ecdsa</p>
+            <p style="font-size: 25px; text-align: center;">Opcion c --> Esto es una prueba<br></p>
+            <p style="font-size: 30px; text-align: center;">¿Podrías indicar que mensaje de estos 3 ha sido firmado?</p>
+          <form action='/medP1' class="form-white mb-4" style="text-align: center;" method="post">
+            <p class="text-muted" style="text-align: center;">Respuesta a la pregunta</p> 
+            <input type="message" name="answ1" class="form-control form-control-lg mb-3" style="border-width: 1px;border-color: black;"/>
+            <div class="col text-center">
+                <button class="btn btn-outline-secondary mb-3" style="border-radius: 40px;" type="submit">Valida respuesta</button>
+            </div>
+          </form>
+        
+        </div>
+    </div>
+    
+           
+</section>
+{% endblock %}
