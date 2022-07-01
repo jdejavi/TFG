@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pydoc import doc
 from flask import Flask, render_template, request, redirect, make_response
 import random
@@ -121,22 +122,22 @@ def leeEInicializa():
     arrayPregMed=[]
     arrayRespMed=[]
 
-    with open('static/preguntasEASY.txt', 'r') as f:
+    with open('static/preguntasEASY.txt', 'r', encoding='utf-8') as f:
                 contenido = f.read()
                 todo1 = str(contenido.replace("Â","").replace("Ã­","í").replace("Ã¡","á").replace("Ã³","ó").replace("Ãº","ú").replace("Ã©","é").replace("Ã±","ñ")).split(sep="\n")
                 for i in range (len(todo1)):
                     arrayPreguntas.append(todo1[i])
-    with open('static/respuestasEASY.txt', 'r') as f:
+    with open('static/respuestasEASY.txt', 'r', encoding='utf-8') as f:
             contenido = f.read()
             todo2 = str(contenido.replace("Â","").replace("Ã­","í").replace("Ã¡","á").replace("Ã³","ó").replace("Ãº","ú").replace("Ã©","é").replace("Ã±","ñ")).split(sep="\n")
-            for i in range (len(todo2)):        
+            for i in range (len(todo2)):
                 arrayRespuestas.append(todo2[i])
-    with open('static/preguntasMED.txt', 'r') as f:
+    with open('static/preguntasMED.txt', 'r', encoding='utf-8') as f:
                 contenido = f.read()
                 todo3 = str(contenido.replace("Â","").replace("Ã­","í").replace("Ã¡","á").replace("Ã³","ó").replace("Ãº","ú").replace("Ã©","é").replace("Ã±","ñ")).split(sep="\n")
                 for i in range (len(todo3)):
                     arrayPregMed.append(todo3[i])
-    with open('static/respuestasMED.txt', 'r') as f:
+    with open('static/respuestasMED.txt', 'r', encoding='utf-8') as f:
             contenido = f.read()
             todo4 = str(contenido.replace("Â","").replace("Ã­","í").replace("Ã¡","á").replace("Ã³","ó").replace("Ãº","ú").replace("Ã©","é").replace("Ã±","ñ")).split(sep="\n")
             for i in range (len(todo4)):        
@@ -860,5 +861,4 @@ def multiDiscrLog():
 
 if __name__ == '__main__':
     leeEInicializa()
-    app.run(host="192.168.1.65", port=5000)
-    
+    app.run(host="0.0.0.0", port=5000)

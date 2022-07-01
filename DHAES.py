@@ -11,7 +11,6 @@ import random
 import hashlib
 from Crypto.Cipher import AES
 import base64
-import pyperclip as clipboard
 
 # Son las funciones para encriptar y desencriptar con el AES-EAX
 #   - Encriptar, pasa a bytes el mensaje, obtiene el IV a partir del modo de operacion y la clave,

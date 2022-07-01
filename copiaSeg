@@ -1,0 +1,28 @@
+FROM ubuntu:18.04 
+
+MAINTAINER Javier Matilla Martín
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt update && apt-get install -y apache2 libapache2-mod-wsgi-py3 python3.10 python3-pip && apt-get clean && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt ./
+#enable mod_wsgi
+RUN a2dissite 000-default.conf
+RUN a2dissite default-ssl.conf
+RUN a2enmod wsgi
+
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+
+COPY ./ /var/www/src
+
+#Creamos el virtual host
+COPY apache/flask.conf /etc/apache2/sites-available/flask.conf
+RUN chown -R www-data:www-data /var/www/src
+RUN chown www-data:www-data /etc/apache2/sites-available/flask.conf
+RUN a2ensite flask.conf
+
+RUN chmod -R 777 /usr/local/lib/python3.6
+RUN pip3 install -r requirements.txt
+EXPOSE 80
+
+#CMD ["/usr/sbin/apache2", "-D", "FOREGROUND"]
