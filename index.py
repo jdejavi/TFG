@@ -22,15 +22,20 @@ app.config['SECRET_KEY'] = '123123123'
 '''Variables globales'''
 
 global correoOTP
-global mensajesEncriptadosParaAlice
-global mensajesEncriptadosParaBob
+
+global mensajesEncriptadosParaAlice #
+global mensajesEncriptadosParaBob #
+
 global hayClaves
 global cambiaK
+
 global arraysLlenos
 global arraysLlenosMed
+
 global numAleat
 
-global correo
+global correo 
+
 global otp
 global nuevaPass
 
@@ -152,7 +157,7 @@ def enviarCorreoRec(correo):
     sender_email = "eccmati2022@hotmail.com"
     email_pass = "SMcJ#Bj4OPgl"
     receiver_em = correo
-
+    numOTP=controlador_db.obtienenumOTPVariables(correo)
     message['Subject'] = email_subject
     message['From'] = sender_email
     message['To'] = receiver_em
@@ -239,43 +244,57 @@ def login():
 
 @app.route('/recovery',methods=["POST","GET"])
 def recovery():
-    global numOTP
-    global correoOTP
-    global correo
-    global nuevaPass
-    global otp
-
-    numOTP = random.randint(100000,999999)
-    correo = request.form.get('mailLost')
+    #el correo debe ser el de la tabla de usuarios y estar registrado
+    #global correoOTP
+    numOTP = None
+    correo = None
+    #global nuevaPass
     
+    #numOTP = random.randint(100000,999999)
+    correo = request.form.get('mailLost')
+    numOTP = random.randint(100000,999999)
     if(correo == None):
-        correoOTP=None
-        otp=None
-        nuevaPass=None
+        #correoOTP=None
+        
+        #nuevaPass=None
         return render_template('introCorreo.html')
     else:
-        correoOTP = correo
-        print('Valor de correoOTP ->'+ str(correoOTP))
-        return redirect('/introOTP2')
+
+        controlador_db.insertaVariables(correo,None,numOTP,None)
+
+        res = make_response(redirect('/introOTP2'))
+        res.set_cookie('email_user', correo, max_age=None)
+
+        return res
+        #insertar en variables fila con el correo, el numOTP, nuevaPass...
+        
 
 @app.route('/introOTP2', methods=["POST","GET"])
 def introOTP2():
-    global numOTP
-    global otp
+    email = request.cookies.get('email_user')
+    numOTP = controlador_db.obtienenumOTPVariables(email)
+    otp = None
 
     otp = request.form.get('inputOTP2')
-    
+
+    print("El valor del correo es -> "+str(email))
+    print("El valor de otp es ->"+str(otp))
+    print("El valor de numOTP es -> "+str(numOTP))
+
     if(otp == None):
-        enviarCorreoRec(correo)
+        enviarCorreoRec(email)
         return render_template('introOTP2.html')
     else:
         if(otp == str(numOTP)):
-            numOTP = otp
+            #numOTP = otp
             return redirect('/nuevaContraseña')
+        else:
+            return redirect('introOTP2')
+
 @app.route('/nuevaContraseña', methods=["POST","GET"])
 def nuevaPasswd():
-    global nuevaPass
-
+    nuevaPass=None
+    email = request.cookies.get('email_user')
     nuevaPass=request.form.get('introNuevaPass')
     
     if(nuevaPass == None):
@@ -283,36 +302,11 @@ def nuevaPasswd():
     else:
         bytes = str(nuevaPass).encode()
         hashPwd = hashlib.sha256(bytes)
-        controlador_db.update_passwd(correoOTP,hashPwd.hexdigest())
-        enviarCorreoPassCambiada(correoOTP)
-        return redirect('/home')
+        controlador_db.update_passwd(email,hashPwd.hexdigest())
+        print("Se ha eliminado el registro ->"+str(controlador_db.borraRegistroVariables(email)))
+        enviarCorreoPassCambiada(email)
+        return redirect('/')
 
-    '''if(otp==None):
-        enviarCorreoRec(correo)
-        return render_template('introOTP2.html')
-    
-    else:
-        correoOTP=correo
-        print('Valor de correoOTP ->'+str(correoOTP))
-        otp = request.form.get('introOTP2')
-        print('Valor de otp ->'+ str(otp))
-        if(otp==None):
-            enviarCorreoRec(correo)
-            return render_template('introOTP2.html')
-        else: 
-            if(otp == str(numOTP)):
-                nuevaPass=request.form.get('introNuevaPass')
-                print('Valor de nuevaPass ->'+ str(nuevaPass))
-                if(nuevaPass == None):
-                    return render_template('introduceNuevaPass.html')
-                else:
-                    bytes = str(nuevaPass).encode()
-                    hashPwd = hashlib.sha256(bytes)
-                    controlador_db.update_passwd(correo,hashPwd)
-                    enviarCorreoPassCambiada(correo)
-                    return redirect('/home')
-            else:
-                return redirect('/introOTP2')'''
 
 @app.route('/bitcoin', methods=["POST","GET"])
 def tutoBtc():
@@ -320,7 +314,7 @@ def tutoBtc():
 
 @app.route('/logged/bitcoin', methods=["POST","GET"])
 def tutoBtcLog():
-    if(compruebaCookie()):
+    if(compruebaCookie()): 
         return render_template('tutoBTCLogueado.html')
     else: return redirect('/login')
 

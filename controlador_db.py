@@ -45,6 +45,66 @@ def insertar_usuarioNoDef(nombre,apellidos,mail,nickname,passwd,conf):
             print('No se conecto a la Db')
             return False
 
+def obtienenumOTPVariables(email):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+        busqueda = "SELECT numOTP from variables WHERE email=%s;"
+        cursor.execute(busqueda,(email,))
+        fila=cursor.fetchall()
+        if(fila):
+            connection.close()
+            return fila[0][0]
+        else:
+            connection.close()
+            return ''
+
+def borraRegistroVariables(email):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+        query = "DELETE FROM variables WHERE email=%s;"
+        cursor.execute(query,(email,))
+        connection.commit()
+        busqueda = "SELECT * FROM variables where email=%s"
+        fila = cursor.execute(busqueda,(email,))
+        if(fila==0):
+           connection.close()
+           return True
+        else:
+           connection.close()
+           return False
+
+def insertaVariables(email,nuevaPass,numOTP,numCuestionario):
+    connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+    cursor=connection.cursor()
+
+    if(cursor):
+        insercion = "INSERT INTO variables (email,nuevaContraseña,numOTP,numerosCuestionario) VALUES (%s, %s, %s, %s);"
+        cursor.execute(insercion,(email,nuevaPass,numOTP,numCuestionario))
+        connection.commit()
+        connection.close()
+
+        print("Inserción tabla variable exitosa")
+        return True
+    else:
+        print("No se conecto a la DB")
+        return False
+
 def update_usuario(mail,conf):
    connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
                            user='ucprxfshxavxruqm',
