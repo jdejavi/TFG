@@ -269,3 +269,201 @@ def actualizaPuntos(hash,email,puntos):
     else: 
         print('No se conecto a la Db')
         return False
+
+def insertaAtributosLogued(email):
+    connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+    cursor=connection.cursor()
+    if(cursor):
+        print('DB connectada')
+        insercion = "INSERT INTO atributosLogueado (email,arraysLlenos,arraysLlenosMed,cambiaK) VALUES (%s, %s, %s, %s);"
+        cursor.execute(insercion,(email,None,None,None))
+        connection.commit()
+        connection.close()
+
+        print("Inserción tabla atributosLogued exitosa")
+        return True
+    else:
+        print("No se conecto a la DB")
+        return False
+
+def obtieneFilaAtrCifrador(email):
+    connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+    cursor=connection.cursor()
+    if(cursor):
+        busqueda = "SELECT * from atrCifrado WHERE email=%s"
+        cursor.execute(busqueda,(email,))
+        fila=cursor.fetchall()
+        if(fila):
+            connection.close()
+            return fila
+        else:
+            connection.close()
+            return ''
+
+def insertaAtrCifrado(email,krAlice,kuAlice,krBob,kuBob,hayK,secretoAlice,secretoBob):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+            
+            insercion = "INSERT INTO atrCifrado (email,krAlice,krBob,kuAlice,kuBob,mensajesDeAlice,mensajesDeBob,mensajeClaroAlice,mensajeClaroBob,hayClaves,secretoDeAlice,secretoDeBob) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+            cursor.execute(insercion,(email,krAlice,krBob,kuAlice,kuBob,None,None,None,None,hayK,secretoAlice,secretoBob))
+            connection.commit()
+            connection.close()
+            
+            print('Insercion exitosa user no def')
+            return True
+   else: 
+            print('No se conecto a la Db')
+            return False
+
+def borraFilaAtrCifrado(email):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+        query = "DELETE FROM atrCifrado WHERE email=%s;"
+        cursor.execute(query,(email,))
+        connection.commit()
+        busqueda = "SELECT * FROM atrCifrado where email=%s"
+        fila = cursor.execute(busqueda,(email,))
+        if(fila==0):
+           connection.close()
+           return True
+        else:
+           connection.close()
+           return False
+
+def updatePilaDeBob(email,mensajesDBob,msgClaroAlice):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+    query = "UPDATE atrCifrado SET mensajesDeBob=%s, mensajeClaroAlice=%s WHERE email=%s"
+    cursor.execute(query,(mensajesDBob,msgClaroAlice,email,))
+    connection.commit()
+    connection.close()
+       
+    print('Update exitosa de pila mensajesDeBob')
+    return True
+   else: 
+    print('No se conecto a la Db')
+    return False
+
+def updatePilaDeAlice(email,mensajesDAlice,msgClaroBob):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+    query = "UPDATE atrCifrado SET mensajesDeAlice=%s, mensajeClaroBob=%s WHERE email=%s"
+    cursor.execute(query,(mensajesDAlice,msgClaroBob,email,))
+    connection.commit()
+    connection.close()
+       
+    print('Update exitosa de pila mensajesDeBob')
+    return True
+   else: 
+    print('No se conecto a la Db')
+    return False
+#########################################3
+def insertaMsgEncripted(email,msgEncAlice, msgEncBob):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+    query = "UPDATE atrCifrado set mensajesDeBob=%s, mensajesDeAlice=%s WHERE email=%s"
+    cursor.execute(query,(msgEncAlice,msgEncBob,email,))
+    connection.commit()
+    connection.close()
+       
+    print('Update exitosa de mensaje encriptado')
+    return True
+   else: 
+    print('No se conecto a la Db')
+    return False
+
+def updateAtrCifrado(email,krAlice,kuAlice,krBob,kuBob,hayK,secretoAlice,secretoBob):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+    query = "UPDATE atrCifrado set krAlice=%s, kuAlice=%s, krBob=%s, kuBob=%s, hayClaves=%s, secretoDeAlice=%s, secretoDeBob=%s WHERE email=%s"
+    cursor.execute(query,(krAlice,kuAlice,krBob,kuBob,hayK,secretoAlice,secretoBob,email,))
+    connection.commit()
+    connection.close()
+       
+    print('Update exitosa de atributos cifrado')
+    return True
+   else: 
+    print('No se conecto a la Db')
+    return False
+
+def updateMensAlice(email):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+    query = "UPDATE atrCifrado set mensajesDeAlice=%s, mensajeClaroBob=%s WHERE email=%s"
+    cursor.execute(query,(None,None,email,))
+    connection.commit()
+    connection.close()
+       
+    print('Update exitosa de atributos cifrado')
+    return True
+   else: 
+    print('No se conecto a la Db')
+    return False
+
+def updateMensBob(email):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+    query = "UPDATE atrCifrado set mensajesDeBob=%s, mensajeClaroAlice=%s WHERE email=%s"
+    cursor.execute(query,(None,None,email,))
+    connection.commit() 
+    connection.close()
+       
+    print('Update exitosa de atributos cifrado')
+    return True
+   else: 
+    print('No se conecto a la Db')
+    return False

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from pydoc import doc
+from sys import getsizeof
 from flask import Flask, render_template, request, redirect, make_response
 import random
 import hashlib
@@ -21,23 +22,23 @@ app.config['SECRET_KEY'] = '123123123'
 
 '''Variables globales'''
 
-global correoOTP
+global correoOTP #
 
 global mensajesEncriptadosParaAlice #
 global mensajesEncriptadosParaBob #
 
-global hayClaves
-global cambiaK
+global hayClaves #
+global cambiaK #
 
 global arraysLlenos
 global arraysLlenosMed
 
 global numAleat
 
-global correo 
+global correo #hecho
 
-global otp
-global nuevaPass
+global otp #hecho
+global nuevaPass #hecho
 
 numAleat=0
 arraysLlenos = False
@@ -68,7 +69,10 @@ def enviar_correo(email):
     nickname = email.split(sep='@')
     confirmation = 'si'
     controlador_db.update_usuario(email,confirmation)
+    controlador_db.insertaAtributosLogued(email)
     message = EmailMessage()
+    controlador_db.insertaAtrCifrado(email,None,None,None,None,None,None,None)
+
     email_subject = "Registro realizado con éxito"
     sender_email = "eccmati2022@hotmail.com"
     email_pass = "SMcJ#Bj4OPgl"
@@ -94,6 +98,7 @@ def enviar_correoOTP(nombre,apellido,apellido2,passwd,email):
     apellidos = apellido + ' ' + apellido2
     nickname = email.split(sep='@')
     confirmation = 'no'
+    numOTP = controlador_db.obtienenumOTPVariables(email)
     controlador_db.insertar_usuarioNoDef(nombre,apellidos,email,nickname[0],passwd,confirmation)
     message = EmailMessage()
     email_subject = "Es necesario que verifique su identidad"
@@ -118,10 +123,12 @@ def enviar_correoOTP(nombre,apellido,apellido2,passwd,email):
     server.close()
 
 def leeEInicializa():
+    #Aqui da igual no va a haber conflicto
     global arrayPreguntas
     global arrayRespuestas
     global arrayPregMed
     global arrayRespMed
+
     arrayPreguntas=[]
     arrayRespuestas=[]
     arrayPregMed=[]
@@ -244,19 +251,13 @@ def login():
 
 @app.route('/recovery',methods=["POST","GET"])
 def recovery():
-    #el correo debe ser el de la tabla de usuarios y estar registrado
-    #global correoOTP
+    
     numOTP = None
     correo = None
-    #global nuevaPass
     
-    #numOTP = random.randint(100000,999999)
     correo = request.form.get('mailLost')
     numOTP = random.randint(100000,999999)
     if(correo == None):
-        #correoOTP=None
-        
-        #nuevaPass=None
         return render_template('introCorreo.html')
     else:
 
@@ -303,9 +304,12 @@ def nuevaPasswd():
         bytes = str(nuevaPass).encode()
         hashPwd = hashlib.sha256(bytes)
         controlador_db.update_passwd(email,hashPwd.hexdigest())
-        print("Se ha eliminado el registro ->"+str(controlador_db.borraRegistroVariables(email)))
+
         enviarCorreoPassCambiada(email)
-        return redirect('/')
+
+        res = make_response(redirect('/'))
+        res.delete_cookie('email_user')
+        return res
 
 
 @app.route('/bitcoin', methods=["POST","GET"])
@@ -329,7 +333,7 @@ def validaFirmas():
         if(publ == None or publ == ''): return render_template('validadorFirmas.html',resultadoFirma='Clave pública no seteada')
         if(sign == None or sign == ''): return render_template('validadorFirmas.html',resultadoFirma='Firma no seteada')
         result=ecdsa.verify_signaturePerso(publ,mens,sign)
-        #print(result)
+        
         return render_template('validadorFirmas.html', resultadoFirma=result)
     else: return redirect ('/login')
     
@@ -355,31 +359,23 @@ def about():
 #Aqui va el procedimiento donde los usuarios van a poder firmar y comprobar firmas de textos.
 @app.route('/generadorFirmas', methods=["GET", "POST"])
 def juegaFirmas():
-    global kprivada,kpublica
 
-    global mensaje
-
-    global firma
-
-    kprivada=''
-    kpublica=''
+    kprivada = None
+    kpublica = None
+    
     mensaje=''
     firma=''
     if(compruebaCookie()):
             mensaje = str(request.form.get('inputMsg'))
-            if(kprivada=='' and kpublica==''):
+            if(kprivada==None and kpublica==None):
                 kprivada,kpublica=ecdsa.make_keypair()
-                publica = "(0x{:x}, 0x{:x})".format(*kpublica)
-                privada = hex(kprivada)
             
-            if(mensaje == '' or mensaje == None or mensaje == 'None'): return render_template('juegaFirmas.html',mensajeSigned='', huellaMensaje='', priv=privada, pub=publica, sign='')
+            if(mensaje == '' or mensaje == None or mensaje == 'None'): return render_template('juegaFirmas.html',mensajeSigned='', huellaMensaje='', 
+            priv=kprivada, pub=kpublica, sign='')
             else:
-                
-                
                 huella = '0x'+hashlib.sha256(mensaje.encode()).hexdigest()
                 mensaje.encode()
                 firma = ecdsa.sign_message(kprivada,mensaje)
-                
                 return render_template('juegaFirmas.html', priv=kprivada, pub=kpublica, sign=firma, mensajeSigned=mensaje,huellaMensaje=huella)
     else:
             return redirect('/login')
@@ -387,75 +383,143 @@ def juegaFirmas():
 @app.route('/cifrador',methods=["POST","GET"])
 def cifrador():
     
-    global krAlice,kuAlice
-    global krBob,kuBob
-    global secretoAlice,secretoBob
+    krAlice,kuAlice = None,None
+    krBob,kuBob = None,None
+    secretoAlice,secretoBob = None,None
+    cambiaK = None
+    hayClaves = None
 
-    global hayClaves
-    global mensajesEncriptadosParaAlice
-    global mensajesEncriptadosParaBob
-    global descAlice,descBob
+    descAlice=None
+    descBob=None
+
+    email = request.cookies.get('email_user')
+    print('El email es -> '+email)
+    fila = controlador_db.obtieneFilaAtrCifrador(email)
+    
 
     if(compruebaCookie()):
-        if(hayClaves==False):
-            hayClaves=True
-            mensajesEncriptadosParaAlice=[]
-            mensajesEncriptadosParaBob=[]
+        if(fila[0][10]==None):
+            hayClaves='si'
+            
             krAlice,kuAlice = ecdsa.make_keypair()
             krBob,kuBob = ecdsa.make_keypair()
+
             secretoAlice = DHAES.ECDH_secretTrunc(krAlice,kuBob)
             secretoBob = DHAES.ECDH_secretTrunc(krBob,kuAlice)
-        
+
+            controlador_db.updateAtrCifrado(email,str(krAlice),str(kuAlice),str(krBob),str(kuBob),hayClaves,str(secretoAlice),str(secretoBob))
+
         cambiaK=request.form.get('cambiaClaves')
         encMsgAlice = request.form.get('inputAliceMsg')
         encMsgBob = request.form.get('inputBobMsg')
+
+        #DescAlice es la pila de mensajes a desencriptar de Bob
+        #DescBob es la pila de mensajes a desencriptar de Alice
+
         descAlice=request.form.get('traduceDAli')
         descBob = request.form.get('traduceDBob')
-        '''print(krAlice,kuAlice)
-        print(krBob,kuBob)'''
         
-        desencriptado=''
-
         if(cambiaK != None):
-            mensajesEncriptadosParaAlice=[]
-            mensajesEncriptadosParaBob=[]
+            
             krAlice,kuAlice = ecdsa.make_keypair()
             krBob,kuBob = ecdsa.make_keypair()
             secretoAlice = DHAES.ECDH_secretTrunc(krAlice,kuBob)
             secretoBob = DHAES.ECDH_secretTrunc(krBob,kuAlice)
+            
+            controlador_db.updateAtrCifrado(email,str(krAlice),str(kuAlice),str(krBob),str(kuBob),hayClaves,str(secretoAlice),str(secretoBob))
+        
         if(descAlice != None):
-            if(len(mensajesEncriptadosParaBob)==0): return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
             
-            desencriptado = DHAES.desencriptarAES_EAX(secretoBob.encode(),mensajesEncriptadosParaBob[0])
-            mensajesEncriptadosParaBob.pop(0)
+            fila = controlador_db.obtieneFilaAtrCifrador(email)
             
-            return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje', msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice=str(desencriptado).replace("b'","").replace("'",""), kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
-        
+            pilaDeBob=0
+            if(fila[0][6]==None):
+                pilaDeAlice = 0
+            else: pilaDeAlice = 1
+            
+
+            encriptado = request.cookies.get('msgEncDeBob')
+            print(str(encriptado))
+            print(str(fila[0][6]))
+
+            if(str(encriptado) == str(fila[0][6])):
+                return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje', msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=pilaDeAlice, nMsgPendientesBob=pilaDeBob, mensajitoDeBob='No hay mensajes', mensajitoDeAlice=fila[0][8], kuAlice=str(fila[0][4]), kuBob=str(fila[0][5]), aliceSecret=str(fila[0][11]), bobSecret=str(fila[0][12]))
+            else:
+                return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje', msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=pilaDeAlice, nMsgPendientesBob=pilaDeBob, mensajitoDeBob='No hay mensajes', mensajitoDeAlice='Mensaje corrompido', kuAlice=str(fila[0][4]), kuBob=str(fila[0][5]), aliceSecret=str(fila[0][11]), bobSecret=str(fila[0][12]))
+            
+            
         if(descBob != None):
-            if(len(mensajesEncriptadosParaAlice)==0): return render_template('encriptt.html', msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
-            desencriptado = DHAES.desencriptarAES_EAX(secretoAlice.encode(),mensajesEncriptadosParaAlice[0])
-            mensajesEncriptadosParaAlice.pop(0)
-            return render_template('encriptt.html', msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob=str(desencriptado).replace("b'","").replace("'",""), mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
-        
+            fila = controlador_db.obtieneFilaAtrCifrador(email)
+            pilaDeAlice = 0
+            if(fila[0][7]==None):
+                pilaDeBob=0
+            else: pilaDeBob=1
+
+            encriptado2 = request.cookies.get('msgEncDeAlice')
+            print(str(encriptado2))
+            print(str(fila[0][7]))
+
+            if(str(encriptado2) == str(fila[0][7])):
+                return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje', msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=pilaDeAlice, nMsgPendientesBob=pilaDeBob, mensajitoDeBob=str(fila[0][9]), mensajitoDeAlice='No hay mensajes', kuAlice=str(fila[0][4]), kuBob=str(fila[0][5]), aliceSecret=str(fila[0][11]), bobSecret=str(fila[0][12]))
+            else:
+                return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje', msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=pilaDeAlice, nMsgPendientesBob=pilaDeBob, mensajitoDeBob='Mensaje corrompido', mensajitoDeAlice='No hay mensajes', kuAlice=str(fila[0][4]), kuBob=str(fila[0][5]), aliceSecret=str(fila[0][11]), bobSecret=str(fila[0][12]))
         #Si no hay nada puesto
         if( (encMsgAlice == None or encMsgAlice == '') and (encMsgBob == None or encMsgBob=='') ):
-            return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
+            fila = controlador_db.obtieneFilaAtrCifrador(email)
+            if(fila[0][6]==None):
+                pilaDeAlice=0
+            else: pilaDeAlice=1
+
+            if(fila[0][7]==None):
+                pilaDeBob = 0
+            else: pilaDeBob = 1
+            return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=pilaDeAlice, nMsgPendientesBob=pilaDeBob, mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=str(fila[0][4]), kuBob=str(fila[0][5]), aliceSecret=str(fila[0][11]), bobSecret=str(fila[0][12]))
         
         #Si hay algun mensaje de Alice para Bob, lo añado al array y devuelvo el tam
         if(encMsgAlice != None and encMsgAlice != '' and encMsgAlice!='None'):
+            msgEncriptedAlice = DHAES.encriptarAES_EAX(fila[0][11].encode(),encMsgAlice)
+            if(getsizeof(msgEncriptedAlice) > 150):
+                return render_template('encriptt.html',msgEncAlice='Mensaje demasiado largo',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=pilaDeAlice, nMsgPendientesBob=pilaDeBob, mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=str(fila[0][4]), kuBob=str(fila[0][5]), aliceSecret=str(fila[0][11]), bobSecret=str(fila[0][12]))
+            controlador_db.updatePilaDeBob(email,str(msgEncriptedAlice),encMsgAlice)
+            fila = controlador_db.obtieneFilaAtrCifrador(email)
             
-            msgEncriptedAlice = DHAES.encriptarAES_EAX(secretoAlice.encode(),encMsgAlice)
-            mensajesEncriptadosParaBob.append(msgEncriptedAlice)
-            return render_template('encriptt.html',msgEncAlice=str(msgEncriptedAlice),msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
+            if(fila[0][6]==None):
+                pilaDeAlice=0
+            else: pilaDeAlice=1
+
+            if(fila[0][7]==None):
+                pilaDeBob = 0
+            else: pilaDeBob = 1
+
+            res = make_response(render_template('encriptt.html',msgEncAlice=str(msgEncriptedAlice),msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=pilaDeAlice, nMsgPendientesBob=pilaDeBob, mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=str(fila[0][4]), kuBob=str(fila[0][5]), aliceSecret=str(fila[0][11]), bobSecret=str(fila[0][12])))
+            res.set_cookie('msgEncDeAlice', str(msgEncriptedAlice), max_age=None)
+            return res
+            
         
         #Si hay algun mensaje de Bob para Alice, lo añado al array y devuelvo el tam
         if(encMsgBob != None and encMsgBob != '' and encMsgBob!='None'):
-            
-            msgEncriptedBob = DHAES.encriptarAES_EAX(secretoBob.encode(),encMsgBob)
-            mensajesEncriptadosParaAlice.append(msgEncriptedBob)
-            return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob=str(msgEncriptedBob), nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
+
+            msgEncriptedBob = DHAES.encriptarAES_EAX(fila[0][12].encode(),encMsgBob)
+            if(getsizeof(msgEncriptedBob) > 150):
+                return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='Mensaje demasiado largo', nMsgPendientesAlice=pilaDeAlice, nMsgPendientesBob=pilaDeBob, mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=str(fila[0][4]), kuBob=str(fila[0][5]), aliceSecret=str(fila[0][11]), bobSecret=str(fila[0][12]))
+            controlador_db.updatePilaDeAlice(email,str(msgEncriptedBob), encMsgBob)
+            fila = controlador_db.obtieneFilaAtrCifrador(email)
+
+            if(fila[0][6]==None):
+                pilaDeAlice=0
+            else: pilaDeAlice=1
+
+            if(fila[0][7]==None):
+                pilaDeBob = 0
+            else: pilaDeBob = 1
+
+            res = make_response(render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob=str(msgEncriptedBob), nMsgPendientesAlice=pilaDeAlice, nMsgPendientesBob=pilaDeBob, mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=str(fila[0][4]), kuBob=str(fila[0][5]), aliceSecret=str(fila[0][11]), bobSecret=str(fila[0][12])))
+            res.set_cookie('msgEncDeBob', str(msgEncriptedBob), max_age=None)
+            return res
         
-        return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=len(mensajesEncriptadosParaAlice), nMsgPendientesBob=len(mensajesEncriptadosParaBob), mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=kuAlice, kuBob=kuBob, aliceSecret=secretoAlice, bobSecret=secretoBob)
+        fila = controlador_db.obtieneFilaAtrCifrador(email)
+        
+        return render_template('encriptt.html',msgEncAlice='No se ha encriptado ningun mensaje',msgEncBob='No se ha encriptado ningun mensaje', nMsgPendientesAlice=0, nMsgPendientesBob=0, mensajitoDeBob='No hay mensajes', mensajitoDeAlice='No hay mensajes', kuAlice=str(fila[0][4]), kuBob=str(fila[0][5]), aliceSecret=str(fila[0][11]), bobSecret=str(fila[0][12]))
     else: return redirect('/login')
 
 @app.route('/easy', methods=["POST","GET"])
@@ -756,44 +820,58 @@ def register():
             return render_template('register.html')
         else:
             '''Generar numero random para el otp'''
-            global correoOTP
-            global numOTP
-            
             numOTP = random.randint(100000,999999)
-            correoOTP=email
+            
+            controlador_db.insertaVariables(email,None,numOTP,None)
             enviar_correoOTP(nombre,apellido,apellido2,passwd,email)
-            return redirect('/introOTP')
+            res = make_response(redirect('/introOTP'))
+            res.set_cookie('email_user', email, max_age=None)
+            return res
             
 @app.route('/introOTP',methods=["POST","GET"])
 def introduceOTP():
+    email = request.cookies.get('email_user')
+    numOTP = controlador_db.obtienenumOTPVariables(email)
     otp=request.form.get('inputOTP')
+
     if(otp==None):
         return render_template('introOTP.html')
     else:
+        
         if(otp == str(numOTP)):
-            enviar_correo(correoOTP)
-            return redirect('/')
+            enviar_correo(email)
+            res = make_response(redirect('/'))
+            res.delete_cookie('email_user')
+            controlador_db.borraRegistroVariables(email)
+            return res
         else:
-            return redirect('/register')
+            res = make_response(redirect('/register'))
+            res.delete_cookie('email_user')
+            controlador_db.borraRegistroVariables(email)
+            return res
+
 @app.route('/resendOTP2', methods=["GET","POST"])
 def resend2():
-    numOTP=random.randint(100000,999999)
+    email = request.cookies.get('email_user')
+    
     '''reenviar otro codigo'''
     
-    enviarCorreoRec(correoOTP)
+    enviarCorreoRec(email)
     return redirect('/introOTP2')
 
 
 @app.route('/resendOTP', methods=["GET","POST"])
 def resend():
-    data=controlador_db.obtieneTodaLaFila(correoOTP)
+    email = request.cookies.get('email_user')
+    controlador_db.actualizanumOTPVariables(email,numOTP)
+    data=controlador_db.obtieneTodaLaFila(email)
     apellidos = data[0][2].split(sep=' ')
     ape1=apellidos[0]
     ape2=apellidos[1]
     numOTP=random.randint(100000,999999)
     '''reenviar otro codigo'''
     
-    enviar_correoOTP(data[0][1],ape1,ape2,data[0][5],correoOTP)
+    enviar_correoOTP(data[0][1],ape1,ape2,data[0][5],email)
     return redirect('/introOTP')
 
 @app.route('/tutorialFirma', methods=["POST","GET"])
