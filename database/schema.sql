@@ -32,11 +32,7 @@ CREATE TABLE preguntas(
     pregBMed VARCHAR(350),
     respBMed VARCHAR(350),
     pregCMed VARCHAR(350),
-    respCMed VARCHAR(350),
-    pregPruebaMed VARCHAR(350),
-    respPruebaMed VARCHAR(350),
-    pregPruebaDiff VARCHAR(350),
-    respPruebaDiff VARCHAR(350)
+    respCMed VARCHAR(350)
 );
 
 CREATE TABLE variables(
