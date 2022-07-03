@@ -18,6 +18,27 @@ CREATE TABLE atributosLogueado(
     cambiaK VARCHAR(150)
 );
 
+CREATE TABLE preguntas(
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(150),
+    pregA VARCHAR(350),
+    respA VARCHAR(350),
+    pregB VARCHAR(350),
+    respB VARCHAR(350),
+    pregC VARCHAR(350),
+    respC VARCHAR(350),
+    pregAMed VARCHAR(350),
+    respAMed VARCHAR(350),
+    pregBMed VARCHAR(350),
+    respBMed VARCHAR(350),
+    pregCMed VARCHAR(350),
+    respCMed VARCHAR(350),
+    pregPruebaMed VARCHAR(350),
+    respPruebaMed VARCHAR(350),
+    pregPruebaDiff VARCHAR(350),
+    respPruebaDiff VARCHAR(350)
+);
+
 CREATE TABLE variables(
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(150),
@@ -40,4 +61,18 @@ CREATE TABLE atrCifrado(
     hayClaves VARCHAR(150),
     secretoDeAlice VARCHAR(250),
     secretoDeBob VARCHAR(250)
+);
+
+CREATE TABLE dataPreguntasTemp(
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(150),
+    respApreg1 VARCHAR(250),
+    respBpreg1 VARCHAR(250),
+    respCpreg1 VARCHAR(250),
+    respApreg2 VARCHAR(250),
+    respBpreg2 VARCHAR(250),
+    respCpreg2 VARCHAR(250),
+    respApreg3 VARCHAR(250),
+    respBpreg3 VARCHAR(250),
+    respCpreg3 VARCHAR(250)
 );

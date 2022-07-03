@@ -467,3 +467,223 @@ def updateMensBob(email):
    else: 
     print('No se conecto a la Db')
     return False
+
+def insertarTablaPreg(email):
+    
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+            
+            insercion = "INSERT INTO preguntas (email,pregA,respA,pregB,respB,pregC,respC,pregAMed,respAMed,pregBMed,respBMed,pregCMed,respCMed,pregPruebaMed,respPruebaMed,pregPruebaDiff,respPruebaDiff) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+            cursor.execute(insercion,(email,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,'aba,bcc,cab'))
+            connection.commit()
+            connection.close()
+            
+            print('Insercion exitosa user no def')
+            return True
+   else: 
+            print('No se conecto a la Db')
+            return False
+
+def actualizanumOTPVariables(email,numOTP):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+    query = "UPDATE variables set numOTP=%s WHERE email=%s"
+    cursor.execute(query,(numOTP,email,))
+    connection.commit() 
+    connection.close()
+       
+    print('Update exitosa de variables')
+    return True
+   else: 
+    print('No se conecto a la Db')
+    return False
+
+def updateTablaPreguntasCE(email,pregA,respA,pregB,respB,pregC,respC):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+    query = "UPDATE preguntas set pregA=%s,respA=%s,pregB=%s,respB=%s,pregC=%s,respC=%s WHERE email=%s"
+    cursor.execute(query,(pregA,respA,pregB,respB,pregC,respC,email,))
+    connection.commit() 
+    connection.close()
+       
+    print('Update exitosa de preguntas')
+    return True
+   else: 
+    print('No se conecto a la Db')
+    return False
+
+def updateTablaPreguntasCM(email,pregMedA,respMedA,pregMedB,respMedB,pregMedC,respMedC):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+    query = "UPDATE preguntas set pregAMed=%s,respAMed=%s,pregBMed=%s,respBMed=%s,pregCMed=%s,respCMed=%s WHERE email=%s"
+    cursor.execute(query,(pregMedA,respMedA,pregMedB,respMedB,pregMedC,respMedC,email,))
+    connection.commit() 
+    connection.close()
+       
+    print('Update exitosa de preguntas')
+    return True
+   else: 
+    print('No se conecto a la Db')
+    return False
+
+def actualizaArrLlenos(email,arraysLlenos):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+    query = "UPDATE atributosLogueado set arraysLlenos=%s WHERE email=%s"
+    cursor.execute(query,(arraysLlenos,email,))
+    connection.commit()
+    connection.close()
+       
+    print('Update exitosa de preguntas')
+    return True
+   else: 
+    print('No se conecto a la Db')
+    return False
+
+def actualizaArrLlenosMed(email,arraysLlenosMed):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+    query = "UPDATE atributosLogueado set arraysLlenosMed=%s WHERE email=%s"
+    cursor.execute(query,(arraysLlenosMed,email,))
+    connection.commit()
+    connection.close()
+       
+    print('Update exitosa de preguntas')
+    return True
+   else: 
+    print('No se conecto a la Db')
+    return False
+
+def obtieneFilaAtrLogued(email):
+    connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+    cursor=connection.cursor()
+    if(cursor):
+        busqueda = "SELECT * from atributosLogueado WHERE email=%s"
+        cursor.execute(busqueda,(email,))
+        fila=cursor.fetchall()
+        if(fila):
+            connection.close()
+            return fila
+        else:
+            connection.close()
+            return ''
+
+def obtieneFilaPreguntas(email):
+    connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+    cursor=connection.cursor()
+    if(cursor):
+        busqueda = "SELECT * from preguntas WHERE email=%s"
+        cursor.execute(busqueda,(email,))
+        fila=cursor.fetchall()
+        if(fila):
+            connection.close()
+            return fila
+        else:
+            connection.close()
+            return ''
+
+def insertaDataPregTemp(email,respApreg1,respBpreg1,respCpreg1,respApreg2,respBpreg2,respCpreg2,respApreg3,respBpreg3,respCpreg3):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+            
+            insercion = "INSERT INTO dataPreguntasTemp (email,respApreg1,respBpreg1,respCpreg1,respApreg2,respBpreg2,respCpreg2,respApreg3,respBpreg3,respCpreg3) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+            cursor.execute(insercion,(email,respApreg1,respBpreg1,respCpreg1,respApreg2,respBpreg2,respCpreg2,respApreg3,respBpreg3,respCpreg3,))
+            connection.commit()
+            connection.close()
+            
+            print('Insercion exitosa dataPregTemp')
+            return True
+   else: 
+            print('No se conecto a la Db')
+            return False
+
+def obtieneRespuestas(email):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+   cursor=connection.cursor()
+   if(cursor):
+       print('DB Connected')
+       busqueda = "SELECT * FROM dataPreguntasTemp WHERE email=%s"
+       fila=cursor.execute(busqueda,(email,))
+       fila=cursor.fetchall()
+       if(fila):
+            connection.close()
+            return fila
+       else:
+            connection.close()
+            return ''
+
+def borraFilaPregTemp(email):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+        query = "DELETE FROM dataPreguntasTemp WHERE email=%s;"
+        cursor.execute(query,(email,))
+        update = "UPDATE preguntas set pregA=%s,respA=%s,pregB=%s,respB=%s,pregC=%s,respC=%s WHERE email=%s"
+        cursor.execute(update,(None,None,None,None,None,None,email))
+        update2 = "UPDATE preguntas set pregAMed=%s,respAMed=%s,pregBMed=%s,respBMed=%s,pregCMed=%s,respCMed=%s WHERE email=%s"
+        cursor.execute(update2,(None,None,None,None,None,None,email))
+        connection.commit()
+        busqueda = "SELECT * FROM dataPreguntasTemp where email=%s"
+        fila = cursor.execute(busqueda,(email,))
+        if(fila==0):
+           connection.close()
+           return True
+        else:
+           connection.close()
+           return False

@@ -22,29 +22,6 @@ app.config['SECRET_KEY'] = '123123123'
 
 '''Variables globales'''
 
-global correoOTP #
-
-global mensajesEncriptadosParaAlice #
-global mensajesEncriptadosParaBob #
-
-global hayClaves #
-global cambiaK #
-
-global arraysLlenos
-global arraysLlenosMed
-
-global numAleat
-
-global correo #hecho
-
-global otp #hecho
-global nuevaPass #hecho
-
-numAleat=0
-arraysLlenos = False
-arraysLlenosMed = False
-cambiaK = False
-hayClaves = False
 
 
 '''Funciones sin ruta'''
@@ -60,7 +37,7 @@ def compruebaCookie():
     '''if(email is None): return False'''
     prueba = request.cookies.get('cookie_key')
     email = request.cookies.get('email_user')
-    #email = controlador_db.obtieneMail(prueba)
+    
     if(controlador_db.hashEmailUsuarioYConfirmado(prueba,email)): return True
     else: return False
 
@@ -72,7 +49,7 @@ def enviar_correo(email):
     controlador_db.insertaAtributosLogued(email)
     message = EmailMessage()
     controlador_db.insertaAtrCifrado(email,None,None,None,None,None,None,None)
-
+    controlador_db.insertarTablaPreg(email)
     email_subject = "Registro realizado con éxito"
     sender_email = "eccmati2022@hotmail.com"
     email_pass = "SMcJ#Bj4OPgl"
@@ -123,9 +100,14 @@ def enviar_correoOTP(nombre,apellido,apellido2,passwd,email):
     server.close()
 
 def leeEInicializa():
-    #Aqui da igual no va a haber conflicto
+    #Aqui da igual no va a haber conflicto, solo son variables de lectura,
+    #no se modifican asique es igual que sean globales
+    
+    #Preguntas easy
     global arrayPreguntas
     global arrayRespuestas
+    
+    #Preguntas med
     global arrayPregMed
     global arrayRespMed
 
@@ -277,10 +259,6 @@ def introOTP2():
     otp = None
 
     otp = request.form.get('inputOTP2')
-
-    print("El valor del correo es -> "+str(email))
-    print("El valor de otp es ->"+str(otp))
-    print("El valor de numOTP es -> "+str(numOTP))
 
     if(otp == None):
         enviarCorreoRec(email)
@@ -526,29 +504,31 @@ def cifrador():
 def generaCuestionarioEasy():
     global arrayPreguntas
     global arrayRespuestas
-    global pregRandom
-    global respRandom
-    global arraysLlenos
-    global numAleat
-    global pregs
-    global resp
+
+    pregRandom=None
+    respRandom=None
     
+    numAleat=0
+    pregs=None
+    resp=None
+
     if(compruebaCookie()):
         answ1 = request.form.get('answ1')
         answ2 = request.form.get('answ2')
         answ3 = request.form.get('answ3')
         hash=request.cookies.get('cookie_key')
         email=request.cookies.get('email_user')
-        
-        if(arraysLlenos==False):
+
+        fila = controlador_db.obtieneFilaAtrLogued(email)
+        if(fila[0][2]==None):
             pregs = []
             resp = []
             pregRandom = []
             respRandom = []
-            arraysLlenos=True
+            arraysLlenos='si'
             ant = 0
             for i in range(3):
-                #random.seed(time.time())
+                
                 numAleat = random.randint(0, 9)
                 while numAleat == ant:
                     numAleat = random.randint(0, 9)
@@ -561,36 +541,51 @@ def generaCuestionarioEasy():
                 resp.append(split[1])
                 resp.append(split[2])
                 resp.append(split[3])
-            return render_template('cuestionarios.html',dificultad='Fácil',preguntaE1=pregs[0], preguntaE2=pregs[1], preguntaE3=pregs[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
-            resp21=resp[3], resp22=resp[4], resp23=resp[5],resp31=resp[6],resp32=resp[7], resp33=resp[8])
+
+            controlador_db.updateTablaPreguntasCE(email,pregs[0],respRandom[0],pregs[1],respRandom[1],pregs[2],respRandom[2])
+            controlador_db.insertaDataPregTemp(email,resp[0],resp[1],resp[2],resp[3],resp[4],resp[5],resp[6],resp[7],resp[8])
+            controlador_db.actualizaArrLlenos(email,arraysLlenos)
+            
+            
+            filaN = controlador_db.obtieneFilaPreguntas(email)
+            respuestas = controlador_db.obtieneRespuestas(email)
+            return render_template('cuestionarios.html',dificultad='Fácil',preguntaE1=str(filaN[0][2]), preguntaE2=str(filaN[0][4]), preguntaE3=str(filaN[0][6]), resp11=respuestas[0][2],resp12=respuestas[0][3], resp13=respuestas[0][4],
+            resp21=respuestas[0][5], resp22=respuestas[0][6], resp23=respuestas[0][7],resp31=respuestas[0][8],resp32=respuestas[0][9], resp33=respuestas[0][10])
 
         if((answ1 == None or answ1 == '') or (answ2 == None or answ2 == '') or (answ3 == None or answ3 == '')):
-            
-            return render_template('cuestionarios.html',dificultad='Fácil',preguntaE1=pregs[0], preguntaE2=pregs[1], preguntaE3=pregs[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
-            resp21=resp[3], resp22=resp[4], resp23=resp[5],resp31=resp[6],resp32=resp[7], resp33=resp[8])
+
+            respuestas = controlador_db.obtieneRespuestas(email)
+            filaN = controlador_db.obtieneFilaPreguntas(email)
+            return render_template('cuestionarios.html',dificultad='Fácil',preguntaE1=str(filaN[0][2]), preguntaE2=str(filaN[0][4]), preguntaE3=str(filaN[0][6]), resp11=respuestas[0][2],resp12=respuestas[0][3], resp13=respuestas[0][4],
+            resp21=respuestas[0][5], resp22=respuestas[0][6], resp23=respuestas[0][7],resp31=respuestas[0][8],resp32=respuestas[0][9], resp33=respuestas[0][10])
         else:
+            respuestas = controlador_db.obtieneRespuestas(email)
             puntuacion = 0
             primera = 'Errónea'
             segunda = 'Errónea'
             tercera='Errónea'
-            
-            if(str(answ1).lower() == respRandom[0]):
+            respuestasBuena = controlador_db.obtieneFilaPreguntas(email)
+            if(str(answ1).lower() == respuestasBuena[0][3]):
                 puntuacion +=50
                 primera = 'Acierto'
-            if(str(answ2).lower() == respRandom[1]):
+            if(str(answ2).lower() == respuestasBuena[0][5]):
                 puntuacion +=50
                 segunda = 'Acierto'
-            if(str(answ3).lower() == respRandom[2]):
+            if(str(answ3).lower() == respuestasBuena[0][7]):
                 puntuacion +=50
                 tercera='Acierto'
+            
             puntosAnt = controlador_db.obtienePuntos(hash,email)
             puntosNew = puntosAnt+puntuacion
+
             controlador_db.actualizaPuntos(hash,email,puntosNew)
-            arraysLlenos=False
+            arraysLlenos=None
+            controlador_db.actualizaArrLlenos(email,arraysLlenos)
+            controlador_db.borraFilaPregTemp(email)
             
-            return render_template('resultadosCuestionario.html',dificultad='Fácil', puntaje=puntuacion,resPreg1=primera, resPreg2=segunda, resPreg3=tercera, preguntaE1=pregs[0], preguntaE2=pregs[1], preguntaE3=pregs[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
-        resp21=resp[3], resp22=resp[4], resp23=resp[5],resp31=resp[6],resp32=resp[7], resp33=resp[8], letra1=str(answ1).lower(),letra2=str(answ2).lower(),letra3=str(answ3).lower(), corr1=respRandom[0],
-        corr2=respRandom[1], corr3=respRandom[2])
+            return render_template('resultadosCuestionario.html',dificultad='Fácil', puntaje=puntuacion,resPreg1=primera, resPreg2=segunda, resPreg3=tercera, preguntaE1=str(respuestasBuena[0][2]), preguntaE2=str(respuestasBuena[0][4]), preguntaE3=str(respuestasBuena[0][6]), resp11=respuestas[0][2],resp12=respuestas[0][3], resp13=respuestas[0][4],
+            resp21=respuestas[0][5], resp22=respuestas[0][6], resp23=respuestas[0][7],resp31=respuestas[0][8],resp32=respuestas[0][9], resp33=respuestas[0][10], letra1=str(answ1).lower(),letra2=str(answ2).lower(),letra3=str(answ3).lower(), corr1=str(respuestasBuena[0][3]),
+            corr2=str(respuestasBuena[0][5]), corr3=str(respuestasBuena[0][7]))
     else:
         return redirect('/login')
 
@@ -598,12 +593,15 @@ def generaCuestionarioEasy():
 def generaCuestionarioMedio():
     global arrayPregMed
     global arrayRespMed
-    global pregRandomMed
-    global respRandomMed
-    global arraysLlenosMed
-    global numAleat
-    global pregsMed
-    global respMed
+    
+    pregRandomMed=None
+    respRandomMed=None
+    
+
+    numAleat=0
+    pregsMed = None
+    respMed = None
+
     if(compruebaCookie()):
         answ1 = request.form.get('answ1')
         answ2 = request.form.get('answ2')
@@ -611,15 +609,17 @@ def generaCuestionarioMedio():
         hash=request.cookies.get('cookie_key')
         email=request.cookies.get('email_user')
 
-        if(arraysLlenosMed==False):
+        fila = controlador_db.obtieneFilaAtrLogued(email)
+
+        if(fila[0][3]==None):
             pregsMed = []
             respMed = []
             pregRandomMed = []
             respRandomMed = []
-            arraysLlenosMed=True
+            arraysLlenosMed='si'
             ant = 0
             for i in range(3):
-                #random.seed(time.time())
+                
                 numAleat = random.randint(0, 9)
                 while numAleat == ant:
                     numAleat = random.randint(0, 9)
@@ -632,36 +632,53 @@ def generaCuestionarioMedio():
                 respMed.append(split[1])
                 respMed.append(split[2])
                 respMed.append(split[3])
-            return render_template('cuestionariosMed.html',dificultad='Media',preguntaE1=pregsMed[0], preguntaE2=pregsMed[1], preguntaE3=pregsMed[2], resp11=respMed[0],resp12=respMed[1], resp13=respMed[2],
-            resp21=respMed[3], resp22=respMed[4], resp23=respMed[5],resp31=respMed[6],resp32=respMed[7], resp33=respMed[8])
+
+            controlador_db.updateTablaPreguntasCM(email,pregsMed[0],respRandomMed[0],pregsMed[1],respRandomMed[1],pregsMed[2],respRandomMed[2])
+            controlador_db.insertaDataPregTemp(email,respMed[0],respMed[1],respMed[2],respMed[3],respMed[4],respMed[5],respMed[6],respMed[7],respMed[8])
+            controlador_db.actualizaArrLlenosMed(email,arraysLlenosMed)
+
+            filaM = controlador_db.obtieneFilaPreguntas(email)
+            respuestas = controlador_db.obtieneRespuestas(email)
+            
+
+            return render_template('cuestionariosMed.html',dificultad='Media',preguntaE1=str(filaM[0][8]), preguntaE2=str(filaM[0][10]), preguntaE3=str(filaM[0][12]), resp11=respuestas[0][2],resp12=respuestas[0][3], resp13=respuestas[0][4],
+            resp21=respuestas[0][5], resp22=respuestas[0][6], resp23=respuestas[0][7],resp31=respuestas[0][8],resp32=respuestas[0][9], resp33=respuestas[0][10])
 
         if((answ1 == None or answ1 == '') or (answ2 == None or answ2 == '') or (answ3 == None or answ3 == '')):
-            
-            return render_template('cuestionariosMed.html',dificultad='Media',preguntaE1=pregsMed[0], preguntaE2=pregsMed[1], preguntaE3=pregsMed[2], resp11=respMed[0],resp12=respMed[1], resp13=respMed[2],
-            resp21=respMed[3], resp22=respMed[4], resp23=respMed[5],resp31=respMed[6],resp32=respMed[7], resp33=respMed[8])
+            respuestas = controlador_db.obtieneRespuestas(email)
+            filaM = controlador_db.obtieneFilaPreguntas(email)
+            return render_template('cuestionariosMed.html',dificultad='Media',preguntaE1=str(filaM[0][8]), preguntaE2=str(filaM[0][10]), preguntaE3=str(filaM[0][12]), resp11=respuestas[0][2],resp12=respuestas[0][3], resp13=respuestas[0][4],
+            resp21=respuestas[0][5], resp22=respuestas[0][6], resp23=respuestas[0][7],resp31=respuestas[0][8],resp32=respuestas[0][9], resp33=respuestas[0][10])
         else:
+            respuestas = controlador_db.obtieneRespuestas(email)
             puntuacion = 0
             primera = 'Errónea'
             segunda = 'Errónea'
             tercera='Errónea'
             
-            if(str(answ1).lower() == respRandomMed[0]):
+            respuestasBuenas = controlador_db.obtieneFilaPreguntas(email)
+            if(str(answ1).lower() == respuestasBuenas[0][9]):
                 puntuacion +=100
                 primera = 'Acierto'
-            if(str(answ2).lower() == respRandomMed[1]):
+            if(str(answ2).lower() == respuestasBuenas[0][11]):
                 puntuacion +=100
                 segunda = 'Acierto'
-            if(str(answ3).lower() == respRandomMed[2]):
+            if(str(answ3).lower() == respuestasBuenas[0][13]):
                 puntuacion +=100
                 tercera='Acierto'
             
             puntosAnt = controlador_db.obtienePuntos(hash,email)
             puntosNew = puntosAnt+puntuacion
+
             controlador_db.actualizaPuntos(hash,email,puntosNew)
 
-            return render_template('resultadosCuestionario.html',dificultad='Media', puntaje=puntuacion,resPreg1=primera, resPreg2=segunda, resPreg3=tercera, preguntaE1=pregsMed[0], preguntaE2=pregsMed[1], preguntaE3=pregsMed[2], resp11=resp[0],resp12=resp[1], resp13=resp[2],
-        resp21=resp[3], resp22=resp[4], resp23=resp[5],resp31=resp[6],resp32=resp[7], resp33=resp[8], letra1=str(answ1).lower(),letra2=str(answ2).lower(),letra3=str(answ3).lower(), corr1=respRandomMed[0],
-        corr2=respRandomMed[1], corr3=respRandomMed[2])
+            arraysLlenosMed=None
+            controlador_db.actualizaArrLlenosMed(email,arraysLlenosMed)
+            controlador_db.borraFilaPregTemp(email)
+            return render_template('resultadosCuestionario.html',dificultad='Media', puntaje=puntuacion,resPreg1=primera, resPreg2=segunda, resPreg3=tercera, preguntaE1=str(respuestasBuenas[0][8]), preguntaE2=str(respuestasBuenas[0][10]), preguntaE3=str(respuestasBuenas[0][12]), resp11=respuestas[0][2],resp12=respuestas[0][3], resp13=respuestas[0][4],
+            resp21=respuestas[0][5], resp22=respuestas[0][6], resp23=respuestas[0][7],resp31=respuestas[0][8],resp32=respuestas[0][9], resp33=respuestas[0][10], letra1=str(answ1).lower(),letra2=str(answ2).lower(),letra3=str(answ3).lower(), corr1=str(respuestasBuenas[0][9]),
+            corr2=str(respuestasBuenas[0][11]), corr3=str(respuestasBuenas[0][13]))
+            
     else:
         return redirect('/login')
 
@@ -785,10 +802,6 @@ def perfil():
         email=request.cookies.get('email_user')
         nick=controlador_db.obtieneNickname(hash,email)
         puntosAnt = controlador_db.obtienePuntos(hash,email)
-        puntos = request.form.get('puntuacion')
-        if(puntos!=None):
-            total = int(puntos) + int(puntosAnt)
-            return render_template('perfil.html',name=nick, puntosTotales=total)
         return render_template('perfil.html',name=nick, puntosTotales=puntosAnt)
     else:
         return redirect('/login')
@@ -863,12 +876,13 @@ def resend2():
 @app.route('/resendOTP', methods=["GET","POST"])
 def resend():
     email = request.cookies.get('email_user')
+    numOTP=random.randint(100000,999999)
     controlador_db.actualizanumOTPVariables(email,numOTP)
     data=controlador_db.obtieneTodaLaFila(email)
     apellidos = data[0][2].split(sep=' ')
     ape1=apellidos[0]
     ape2=apellidos[1]
-    numOTP=random.randint(100000,999999)
+    
     '''reenviar otro codigo'''
     
     enviar_correoOTP(data[0][1],ape1,ape2,data[0][5],email)
