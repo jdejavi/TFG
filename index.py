@@ -631,8 +631,12 @@ def generaCuestionarioMedio():
                 numAleat = random.randint(1, 9)
                 while numAleat == ant:
                     numAleat = random.randint(1, 9)
-                pregRandomMed.append(arrayPregMed[numAleat])
-                respRandomMed.append(arrayRespMed[numAleat])
+
+                preguntasYResp = devuelvePreguntas('Med')
+                #respuesta = controlador_db.obtieneFilaDBR(numAleat+10)
+                
+                pregRandomMed.append(preguntasYResp[numAleat])#pregunta
+                respRandomMed.append(preguntasYResp[numAleat+10])#respuesta
                 ant=numAleat
             for i in range(len(pregRandomMed)):
                 split=str(pregRandomMed[i]).split(sep=";")
