@@ -1,5 +1,3 @@
-from email.mime import base
-from sqlite3 import connect
 import pymysql
 import hashlib
 
@@ -479,8 +477,8 @@ def insertarTablaPreg(email):
 
    if(cursor):
             
-            insercion = "INSERT INTO preguntas (email,pregA,respA,pregB,respB,pregC,respC,pregAMed,respAMed,pregBMed,respBMed,pregCMed,respCMed,pregPruebaMed,respPruebaMed,pregPruebaDiff,respPruebaDiff) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-            cursor.execute(insercion,(email,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,'aba,bcc,cab'))
+            insercion = "INSERT INTO preguntas (email,pregA,respA,pregB,respB,pregC,respC,pregAMed,respAMed,pregBMed,respBMed,pregCMed,respCMed) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+            cursor.execute(insercion,(email,None,None,None,None,None,None,None,None,None,None,None,None))
             connection.commit()
             connection.close()
             
@@ -687,3 +685,41 @@ def borraFilaPregTemp(email):
         else:
            connection.close()
            return False
+
+def insertaPreguntas(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10):
+   connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+
+   cursor=connection.cursor()
+
+   if(cursor):
+            
+            insercion = "INSERT INTO preguntasyResp (pregunta1, pregunta2, pregunta3, pregunta4, pregunta5, pregunta6, pregunta7, pregunta8, pregunta9, pregunta10, correcta1, correcta2, correcta3, correcta4, correcta5, correcta6, correcta7, correcta8, correcta9, correcta10) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+            cursor.execute(insercion,(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,))
+            connection.commit()
+            connection.close()
+            
+            print('Insercion exitosa preguntasyRespuestas')
+            return True
+   else: 
+            print('No se conecto a la Db')
+            return False
+
+def obtieneFilaPregResp():
+    connection=pymysql.connect(host='b6sembtlcyhj27os1pwp-mysql.services.clever-cloud.com',
+                           user='ucprxfshxavxruqm',
+                           password='zNSwEFVIYhtaOcQyA03O',
+                           db='b6sembtlcyhj27os1pwp')
+    cursor=connection.cursor()
+    if(cursor):
+        busqueda = "SELECT * from preguntasyResp"
+        cursor.execute(busqueda,())
+        fila=cursor.fetchall()
+        if(fila):
+            connection.close()
+            return fila
+        else:
+            connection.close()
+            return ''

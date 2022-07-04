@@ -72,3 +72,29 @@ CREATE TABLE dataPreguntasTemp(
     respBpreg3 VARCHAR(250),
     respCpreg3 VARCHAR(250)
 );
+
+CREATE TABLE preguntasyResp(
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    pregunta1 VARCHAR(500),
+    pregunta2 VARCHAR(500),
+    pregunta3 VARCHAR(500),
+    pregunta4 VARCHAR(500),
+    pregunta5 VARCHAR(500),
+    pregunta6 VARCHAR(500),
+    pregunta7 VARCHAR(500),
+    pregunta8 VARCHAR(500),
+    pregunta9 VARCHAR(500),
+    pregunta10 VARCHAR(500),
+    correcta1 VARCHAR(10),
+    correcta2 VARCHAR(10),
+    correcta3 VARCHAR(10),
+    correcta4 VARCHAR(10),
+    correcta5 VARCHAR(10),
+    correcta6 VARCHAR(10),
+    correcta7 VARCHAR(10),
+    correcta8 VARCHAR(10),
+    correcta9 VARCHAR(10),
+    correcta10 VARCHAR(10)
+);
+
+pregunta1 pregunta2 pregunta3 pregunta4 pregunta5 pregunta6 pregunta7 pregunta8 pregunta9 pregunta10, correcta1 correcta2 correcta3 correcta4 correcta5 correcta6 correcta7 correcta8 correcta9 correcta10

@@ -41,6 +41,12 @@ def compruebaCookie():
     if(controlador_db.hashEmailUsuarioYConfirmado(prueba,email)): return True
     else: return False
 
+def devuelvePreguntas(ind):
+    fila = controlador_db.obtieneFilaPregResp()
+    if(str(ind) == 'Easy'):
+        return fila [0]
+    else: return fila [1]
+
 def enviar_correo(email):
     
     nickname = email.split(sep='@')
@@ -98,7 +104,7 @@ def enviar_correoOTP(nombre,apellido,apellido2,passwd,email):
     server.send_message(message)
         
     server.close()
-
+'''
 def leeEInicializa():
     #Aqui da igual no va a haber conflicto, solo son variables de lectura,
     #no se modifican asique es igual que sean globales
@@ -137,7 +143,7 @@ def leeEInicializa():
             for i in range (len(todo4)):        
                 arrayRespMed.append(todo4[i])
     print('Vectores inicializados correctamente')
-
+'''
 def enviarCorreoRec(correo):
     
     
@@ -502,8 +508,6 @@ def cifrador():
 
 @app.route('/easy', methods=["POST","GET"])
 def generaCuestionarioEasy():
-    global arrayPreguntas
-    global arrayRespuestas
 
     pregRandom=None
     respRandom=None
@@ -529,12 +533,16 @@ def generaCuestionarioEasy():
             ant = 0
             for i in range(3):
                 
-                numAleat = random.randint(0, 9)
+                numAleat = random.randint(1, 10)
                 while numAleat == ant:
-                    numAleat = random.randint(0, 9)
-                pregRandom.append(arrayPreguntas[numAleat])
-                respRandom.append(arrayRespuestas[numAleat])
+                    numAleat = random.randint(1, 10)
+                preguntasYResp = devuelvePreguntas('Easy')
+                #respuesta = controlador_db.obtieneFilaDBR(numAleat+10)
+                
+                pregRandom.append(preguntasYResp[numAleat])#pregunta
+                respRandom.append(preguntasYResp[numAleat+10])#respuesta
                 ant=numAleat
+
             for i in range(len(pregRandom)):
                 split=str(pregRandom[i]).split(sep=";")
                 pregs.append(split[0])
@@ -620,9 +628,9 @@ def generaCuestionarioMedio():
             ant = 0
             for i in range(3):
                 
-                numAleat = random.randint(0, 9)
+                numAleat = random.randint(1, 9)
                 while numAleat == ant:
-                    numAleat = random.randint(0, 9)
+                    numAleat = random.randint(1, 9)
                 pregRandomMed.append(arrayPregMed[numAleat])
                 respRandomMed.append(arrayRespMed[numAleat])
                 ant=numAleat
@@ -946,5 +954,5 @@ def multiDiscrLog():
 
 
 if __name__ == '__main__':
-    leeEInicializa()
+    #leeEInicializa()
     app.run(host="0.0.0.0", port=5000)
