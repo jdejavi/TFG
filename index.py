@@ -599,8 +599,8 @@ def generaCuestionarioEasy():
 
 @app.route('/medC',methods=["POST","GET"])
 def generaCuestionarioMedio():
-    global arrayPregMed
-    global arrayRespMed
+    #global arrayPregMed
+    #global arrayRespMed
     
     pregRandomMed=None
     respRandomMed=None
